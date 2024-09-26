@@ -1,4 +1,4 @@
 # computingDisciplines
 Computing Across Disciplines
 
-Resources for Integrating Ounces of Computing Across Disciplines
+This repository maintains resources for Integrating Ounces of Computing Across Various Disciplines
