@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incidence Proportion (Cumulative Incidence)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            display: flex;
+        }
+        .pane {
+            flex: 1;
+            padding: 20px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+        }
+        .pane:last-child {
+            margin-right: 0;
+        }
+        .highlight {
+            background-color: yellow;
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .fraction {
+            display: inline-block;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .fraction > span {
+            display: block;
+        }
+        .fraction .numerator {
+            border-bottom: 1px solid #000;
+        }
+        .fraction .denominator {
+            margin-top: -5px;
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%; /* Position the tooltip above the text */
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <h1>Incidence Proportion (Cumulative Incidence)</h1>
+    <p class="highlight">Definition: Proportion of population becoming new cases, occurring within a defined population at risk during a specified point in time.</p>
+    <p>Cumulative Incidence (Incidence Proportion) = <span class="fraction"><span class="numerator">No. new disease cases during a specified time</span><span class="denominator">No. at risk at beginning of time interval</span></span> * Multiplier</p>
+    
+    <div class="container">
+        <div class="pane">
+            <h2>Input</h2>
+            <label for="disease">What disease are we studying?</label><br>
+            <input type="text" id="disease"><br><br>
+            
+            <label for="atRisk">How many at risk at beginning of time interval?</label><br>
+            <input type="number" id="atRisk"><br><br>
+            
+            <label for="timeInterval">What is the time interval?</label><br>
+            <input type="text" id="timeInterval"><br><br>
+            
+            <label for="newCases">How many new disease cases during the time interval?</label><br>
+            <input type="number" id="newCases"><br><br>
+            
+            <label for="multiplier">What is a suitable multiplier?</label><br>
+            <input type="number" id="multiplier"><br><br>
+            
+            <button id="calculateBtn">Calculate</button>
+        </div>
+        <div class="pane">
+            <h2>Output</h2>
+            <div id="result" class="result"></div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#calculateBtn').click(function() {
+                var disease = $('#disease').val();
+                var atRisk = parseFloat($('#atRisk').val());
+                var newCases = parseFloat($('#newCases').val());
+                var multiplier = parseFloat($('#multiplier').val());
+                var timeInterval = $('#timeInterval').val();
+
+                if (isNaN(atRisk) || isNaN(newCases) || isNaN(multiplier) || atRisk <= 0) {
+                    $('#result').text('Please enter valid numbers for at risk, new cases, and multiplier.');
+                    return;
+                }
+
+                var incidenceProportion = (newCases / atRisk) * multiplier;
+                $('#result').html(`Incidence proportion = <span class="fraction"><span class="numerator">${newCases}</span><span class="denominator">${atRisk}</span></span> * ${multiplier} = <span class="tooltip">${incidenceProportion.toFixed(2)}<span class="tooltiptext">calculated as: new disease cases / at risk * multiplier</span></span> incident cases of "<span class="tooltip">${disease}<span class="tooltiptext">the disease that you specified</span></span>" per "<span class="tooltip">${multiplier}<span class="tooltiptext">the multiplier that you specified</span></span>" at risk over a period of "<span class="tooltip">${timeInterval}<span class="tooltiptext">the time interval that you specified</span></span>".`);
+            });
+        });
+    </script>
+</body>
+</html>
