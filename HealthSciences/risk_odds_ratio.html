@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Ratio and Odds Ratio</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        .fraction {
+            display: inline-block;
+            vertical-align: middle;
+            margin: 0 5px;
+        }
+        .fraction > span {
+            display: block;
+            text-align: center;
+        }
+        .fraction span.numerator {
+            border-bottom: 1px solid #000;
+        }
+        .table-container {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Risk Ratio and Odds Ratio</h1>
+        <p>Two fundamental ratios that study whether there is an association between an <b>exposure</b> and an <b>outcome</b> occurrence are (1) Risk Ratio, and (2) Odds Ratio.</p> 
+		<p>Note that in epidemiology, <b>exposure</b> is defined as a factor that may be associated with an outcome. An <b>outcome</b> could be a disease that we are studying.</p>
+        <p>Risk Ratio compares risk for a disease between groups exposed to the factor and groups not exposed to the factor. Odds Ratio compares odds of exposure to the factor between disease cases and control cases.</p>
+		<p>Note that in epidemiology, <b>disease cases</b> are the group of people who have the outcome that we are studying; <b>control cases</b> are the group of people who do not have the outcome that we are studying.</p>
+        
+        <p>
+            Risk Ratio = 
+            <span class="fraction">
+                <span class="numerator">risk of disease in exposed</span>
+                <span class="denominator">risk of disease in unexposed</span>
+            </span>
+        </p>
+        <p>
+            Odds Ratio = 
+            <span class="fraction">
+                <span class="numerator">odds of exposure among disease cases</span>
+                <span class="denominator">odds of exposure among control cases</span>
+            </span>
+        </p>
+		
+		<p>Risk is the same as Incidence, which we learnt earlier at <a href="IncidenceProportionCalculator.html">Incidence Proportion Calculator</a>. Note that we use the same Multiplier while calculating the risk of disease in exposed (numerator of the Risk Ratio), and while calculating the risk of disease in unexposed (denominator of the Risk Ratio).</p>
+		
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="2" rowspan="2"></th>
+                        <th colspan="2">Outcome Status</th>
+                        <th rowspan="2">Row Total</th>
+                    </tr>
+                    <tr>
+                        <th>Yes</th>
+                        <th>No</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th rowspan="2">Exposure Status</th>
+                        <th>Yes</th>
+                        <td>A = E+, O+</td>
+                        <td>B = E+, O-</td>
+                        <th>A + B = E+</th>
+                    </tr>
+                    <tr>
+                        <th>No</th>
+                        <td>C = E-, O+</td>
+                        <td>D = E-, O-</td>
+						<th>C + D = E-</th>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="2">Column Total</th>
+                        <th>A + C = O+</th>
+                        <th>B + D = O-</th>
+                        <th>N = ALL</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+
+        <p>In the above table,</p>
+		<p>
+		A = number of people exposed (E+) and developed the outcome during the study (O+)<br/>
+        B = number of people exposed (E+) and did not develop the outcome during the study (O-)<br/>
+        C = number of people who were not exposed (E-) and developed the outcome during the study (O+)<br/>
+        D = number of people who were not exposed (E-) and did not develop the outcome during the study (O-)<br/></p>
+		
+		<hr>
+		
+		<p> Based on the above we can examine some totals as follows:<br/><br/>
+        <b>N</b> = the total number of people in our study = A + B + C + D<br/><br/>
+
+		<b>(A + B)</b> = the number of people who were exposed to the factor in our study(E+) (Note that some of them developed the outcome and some of them did not develop the outcome during the study)<br/>
+		<b>(C + D)</b> = the number of people who were not exposed to the factor in our study (E-) (Note that some of them developed the outcome and some of them did not develop the outcome during the study)<br/><br/>
+
+		<b>(A + C)</b> = the number of people who developed the outcome during our study (O+) (Note that some of them were exposed to the factor and some of them were not exposed to the factor in our study)<br/>
+		<b>(B + D)</b> = the number of people who did not develop the outcome during our study (O-) (Note that some of them were exposed to the factor and some of them were not exposed to the factor in our study)
+		
+		</p>
+
+        <hr>
+
+        <p>To calculate Risk Ratio, we need to calculate:</p>
+        <p>
+            risk of disease in exposed = 
+            <span class="fraction">
+                <span class="numerator">number of disease in exposed</span>
+                <span class="denominator">number of exposed</span>
+            </span>
+            = 
+            <span class="fraction">
+                <span class="numerator">A</span>
+                <span class="denominator">A + B</span>
+            </span>
+        </p>
+        <p>
+            risk of disease in unexposed = 
+            <span class="fraction">
+                <span class="numerator">number of disease in unexposed</span>
+                <span class="denominator">number of unexposed</span>
+            </span>
+            = 
+            <span class="fraction">
+                <span class="numerator">C</span>
+                <span class="denominator">C + D</span>
+            </span>
+        </p>
+        <p>
+            Risk Ratio = 
+            <span class="fraction">
+                <span class="numerator">risk of disease in exposed</span>
+                <span class="denominator">risk of disease in unexposed</span>
+            </span> =
+            <span class="fraction">
+                <span class="numerator">A / (A + B)</span>
+                <span class="denominator">C / (C + D)</span>
+            </span>
+        </p>
+				
+        <hr>
+
+        <p>To calculate Odds Ratio, we need to calculate:</p>
+        <p>
+            odds of exposure among disease cases = 
+            <span class="fraction">
+                <span class="numerator">number of exposed among those with disease</span>
+                <span class="denominator">number with disease</span>
+            </span>
+            = 
+            <span class="fraction">
+                <span class="numerator">A</span>
+                <span class="denominator">A + C</span>
+            </span>
+        </p>
+        <p>
+            odds of exposure among control cases = 
+            <span class="fraction">
+                <span class="numerator">number of exposed among those without disease</span>
+                <span class="denominator">number without disease</span>
+            </span>
+            = 
+            <span class="fraction">
+                <span class="numerator">B</span>
+                <span class="denominator">B + D</span>
+            </span>
+        </p>
+        <p>
+            Odds Ratio = 
+            <span class="fraction">
+                <span class="numerator">odds of exposure among disease cases</span>
+                <span class="denominator">odds of exposure among control cases</span>
+            </span> =
+            <span class="fraction">
+                <span class="numerator">A / (A + C)</span>
+                <span class="denominator">B / (B + D)</span>
+            </span>
+        </p>
+
+		<hr>
+		<p>Suppose a study calculates the risk ratio as above, and comes up with the number r. Let us examine what this means more carefully. Suppose we have a population of p that are not exposed to the factor, and of those, n people develop the outcome. The question we need to ask is: suppose we have a population of p that are exposed to the factor, how may of those are likely to develop the outcome? The answer to that is r * n. When n = 1, then the number of people who are likely to develop the outcome (among the same number of people p) when exposed to the factor is r.
+		</p>
+		
+		<p>In our studies, we compare r and 1, these three are possible scenarios.
+		<ul>
+		<li>r = 1. This means that the exposure to the factor did not impact the occurrence of the outcome (no association).
+		<li>r &gt; 1. This means that the exposure to the factor increased the possibility of the occurrence of the outcome.
+		<li>r &lt; 1. This means that the exposure to the factor decreased the possibility of the occurrence of the outcome.		
+		</ul>
+		</p>
+
+		<p>Instead of looking at r, we often use the term <b>Relative Risk</b> = (r - 1). As you can see Relative Risk can be 0 (indicating no association), positive (indicating higher risk to outcome when exposed to the factor), or negative (indicating lower risk to outcome when exposed to the factor). Based on the value for (r - 1), we can specify the result of our study as follows:
+		
+		<ul>
+		<li>If Relative Risk = 0, we say that our study showed: exposure to the factor had no association with the outcome.
+		<li>If Relative Risk &gt; 0, we say that our study showed: (r - 1) higher risk for the outcome in those exposed to the factor.<br/>
+		Note that we typically show the Relative Risk as percentage and say: (r - 1) * 100% higher risk for the outcome in those exposed to the factor.
+		<li>If Relative Risk &lt; 0, we say that our study showed: |(r - 1)| lower risk for the outcome in those exposed to the factor. See that we take the absolute value so that we change the negative (r - 1) to a positive value.<br/>
+		Again, we typically show the Relative Risk as percentage and say: |(r - 1)| * 100% lower risk for the outcome in those exposed to the factor.
+		
+		</ul>
+		</p>
+
+		<p>Similarly suppose a study calculates the odds ratio as above, and comes up with the number r. Just like for risk ratio, we compute Relative Odds = (r - 1). Based on the value for (r - 1), we can specify the result of our study as follows:
+		
+		<ul>
+		<li>If Relative Odds = 0, we say that our study showed: odds of being exposed to the factor was the same among those who developed the outcome and those who did not develop the outcome.
+		<li>If Relative Odds &gt; 0, we say that our study showed: odds of being exposed to the factor is (r - 1) higher for those who developed the outcome.<br/>
+		Expressing Relative Odds as percentage we say: (r - 1) * 100% higher odds of being exposed to the factor for those who developed the outcome.
+		<li>If Relative Odds &lt; 0, we say that our study showed: odds of being exposed to the factor is |(r - 1)| lower for those who developed the outcome (using absolute value just like for Relative Risk).<br/>
+		Expressing Relative Odds as percentage we say: |(r - 1)| * 100% lower odds of being exposed to the factor for those who developed the outcome.
+		
+		</ul>
+		
+		</p>
+
+
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<hr>
+
+<div class="pane">
+    <h2>Calculator</h2>
+    <p>What disease are you studying?</p>
+    <input type="text" id="disease" placeholder="Enter disease">
+    <p>What exposure are you studying?</p>
+    <input type="text" id="exposure" placeholder="Enter exposure">
+    <button id="nextStep">Go to the next step</button>
+</div>
+
+<div id="nextPane" style="display: none;">
+    <div class="pane">
+        <h2>Calculator</h2>
+        <p>Please fill in the values that are known. Leave those that are not known to you blank and they will be automatically calculated based on values that are known.</p>
+        <p><input type="number" id="total" placeholder="Enter total number"> &nbsp; What is the total number of people in your study?</p>
+        
+        <p><input type="number" id="totalDisease" placeholder="Enter number"> &nbsp; What is the total number of people who developed <span id="diseaseName1">{disease}</span> by the end of your study? </p>
+        
+        <p><input type="number" id="totalNoDisease" placeholder="Enter number"> &nbsp; What is the total number of people who did not develop <span id="diseaseName2">{disease}</span> at the end of your study ?</p>
+        
+        <p><input type="number" id="totalExposed" placeholder="Enter number"> &nbsp; What is the total number of people who were exposed to <span id="exposureName1">{exposure}</span> during the study?</p>
+        
+        <p><input type="number" id="totalNotExposed" placeholder="Enter number"> &nbsp; What is the total number of people who were not exposed to <span id="exposureName2">{exposure}</span> during your study?</p>
+        
+        <p><input type="number" id="exposedDisease" placeholder="Enter number"> &nbsp; Of the people exposed to <span id="exposureName3">{exposure}</span> during your study, how many developed <span id="diseaseName3">{disease}</span>?</p>
+        
+        <p><input type="number" id="exposedNoDisease" placeholder="Enter number"> &nbsp; Of the people exposed to <span id="exposureName4">{exposure}</span> during your study, how many did not develop <span id="diseaseName4">{disease}</span>?</p>
+        
+        <p><input type="number" id="notExposedDisease" placeholder="Enter number"> &nbsp; Of the people not exposed to <span id="exposureName5">{exposure}</span> during your study, how many developed <span id="diseaseName5">{disease}</span>?</p>
+        
+        <p><input type="number" id="notExposedNoDisease" placeholder="Enter number"> &nbsp; Of the people not exposed to <span id="exposureName6">{exposure}</span> during your study, how many did not develop <span id="diseaseName6">{disease}</span>?</p>
+        
+    </div>
+
+    <div class="pane">
+        <h2>Outcome Status * Disease Status Table</h2>
+        <table>
+                <thead>
+                    <tr>
+                        <th colspan="2" rowspan="2"></th>
+                        <th colspan="2">Disease Status</th>
+                        <th rowspan="2">Row Total</th>
+                    </tr>
+                    <tr>
+                        <th>Yes</th>
+                        <th>No</th>
+                    </tr>
+                </thead>
+            <tbody>
+                <tr>
+                    <th rowspan="2">Exposure Status</th>
+                    <th>Yes</th>
+                    <td id="A">A</td>
+                    <td id="B">B</td>
+                    <th id="AB">A + B</td>
+                </tr>
+                <tr>
+                    <th>No</th>
+                    <td id="C">C</td>
+                    <td id="D">D</td>
+					<th id="CD">C + D</th>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="2">Column Total</th>
+                    <th id="AC">A + C</th>
+                    <th id="BD">B + D</th>
+                    <th id="N">N</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+	
+<div class="pane">
+    <h2>Results</h2>
+    <p id="riskRatioValue">Risk Ratio: N/A</p>
+    <p id="riskRatioMessage"></p>
+    <p>Odds Ratio: <span id="oddsRatio">N/A</span></p>
+    <p id="oddsRatioMessage"></p>
+</div>
+	
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#nextStep').click(function() {
+            $('#nextPane').show();
+        });
+
+function updateTable() {
+    var A = $('#exposedDisease').val() ? parseInt($('#exposedDisease').val()) : undefined;
+    var B = $('#exposedNoDisease').val() ? parseInt($('#exposedNoDisease').val()) : undefined;
+    var C = $('#notExposedDisease').val() ? parseInt($('#notExposedDisease').val()) : undefined;
+    var D = $('#notExposedNoDisease').val() ? parseInt($('#notExposedNoDisease').val()) : undefined;
+    var total = $('#total').val() ? parseInt($('#total').val()) : undefined;
+    var totalDisease = $('#totalDisease').val() ? parseInt($('#totalDisease').val()) : undefined;
+    var totalNoDisease = $('#totalNoDisease').val() ? parseInt($('#totalNoDisease').val()) : undefined;
+    var totalExposed = $('#totalExposed').val() ? parseInt($('#totalExposed').val()) : undefined;
+    var totalNotExposed = $('#totalNotExposed').val() ? parseInt($('#totalNotExposed').val()) : undefined;
+
+    // Calculate missing values
+    if (total === undefined && (A + B + C + D)) total = A + B + C + D;
+    if (total === undefined && (totalDisease + totalNoDisease)) total = totalDisease + totalNoDisease;
+    if (total === undefined && (totalExposed + totalNotExposed)) total = totalExposed + totalNotExposed;
+
+
+    if (totalDisease === undefined && (A + C)) totalDisease = A + C;
+    if (totalDisease === undefined && (total - totalNoDisease)) totalDisease = total - totalNoDisease;
+    if (totalNoDisease === undefined && (B + D)) totalNoDisease = B + D;
+    if (totalNoDisease === undefined && (total - totalDisease)) totalNoDisease = total - totalDisease;
+
+    if (totalExposed === undefined && (A + B)) totalExposed = A + B;
+    if (totalExposed === undefined && (total - totalNotExposed)) totalExposed = total - totalNotExposed;
+    if (totalNotExposed === undefined && (C + D)) totalNotExposed = C + D;
+    if (totalNotExposed === undefined && (total - totalExposed)) totalNotExposed = total - totalExposed;
+
+    if (A === undefined && (totalExposed - B)!== undefined) A = totalExposed - B;
+    if (A === undefined && (totalDisease - C)!== undefined) A = totalDisease - C;
+    if (B === undefined && (totalExposed - B) !== undefined) B = totalExposed - A;
+    if (B === undefined && (totalNoDisease - D)!== undefined) B = totalNoDisease - D;
+
+    if (C === undefined && (totalDisease - A)!== undefined) C = totalDisease - A;
+    if (C === undefined && (totalNotExposed - D)!== undefined) C = totalNotExposed - D;
+    if (D === undefined && (totalNoDisease - B) !== undefined) D = totalNoDisease - B;
+    if (D === undefined && (totalNotExposed - C)!== undefined) D = totalNotExposed - C;
+
+    $('#A').text(A !== undefined ? A : 'N/A');
+    $('#B').text(B !== undefined ? B : 'N/A');
+    $('#C').text(C !== undefined ? C : 'N/A');
+    $('#D').text(D !== undefined ? D : 'N/A');
+    $('#AB').text(totalExposed !== undefined ? totalExposed : 'N/A');
+    $('#AC').text(totalDisease !== undefined ? totalDisease : 'N/A');
+    $('#BD').text(totalNoDisease !== undefined ? totalNoDisease : 'N/A');
+    $('#CD').text(totalNotExposed !== undefined ? totalNotExposed : 'N/A');
+    $('#N').text(total !== undefined ? total : 'N/A');
+
+    $('#exposedDisease').val(A !== undefined ? A : 'N/A');
+    $('#exposedNoDisease').val(B !== undefined ? B : 'N/A');
+    $('#notExposedDisease').val(C !== undefined ? C : 'N/A');
+    $('#notExposedNoDisease').val(D !== undefined ? D : 'N/A');
+
+    $('#total').val(total !== undefined ? total : '');
+    $('#totalDisease').val(totalDisease !== undefined ? totalDisease : '');
+    $('#totalNoDisease').val(totalNoDisease !== undefined ? totalNoDisease : '');
+    $('#totalExposed').val(totalExposed !== undefined ? totalExposed : '');
+    $('#totalNotExposed').val(totalNotExposed !== undefined ? totalNotExposed : '');
+}
+
+
+
+function updateTable1() {
+    var A = parseInt($('#exposedDisease').val()) || 0;
+    var B = parseInt($('#exposedNoDisease').val()) || 0;
+    var C = parseInt($('#notExposedDisease').val()) || 0;
+    var D = parseInt($('#notExposedNoDisease').val()) || 0;
+    var total = parseInt($('#total').val()) || 0;
+    var totalDisease = parseInt($('#totalDisease').val()) || 0;
+    var totalNoDisease = parseInt($('#totalNoDisease').val()) || 0;
+    var totalExposed = parseInt($('#totalExposed').val()) || 0;
+    var totalNotExposed = parseInt($('#totalNotExposed').val()) || 0;
+
+    // Calculate missing values
+    if (!total && (A + B + C + D)) total = A + B + C + D;
+    if (!total && (totalDisease + totalNoDisease)) total = totalDisease + totalNoDisease;
+    if (!total && (totalExposed + totalNotExposed)) total = totalExposed + totalNotExposed;	
+    if (!totalDisease && (A + C)) totalDisease = A + C;
+    if (!totalNoDisease && (B + D)) totalNoDisease = B + D;
+    if (!totalExposed && (A + B)) totalExposed = A + B;
+    if (!totalNotExposed && (C + D)) totalNotExposed = C + D;
+
+    if (!A && totalExposed) A = totalExposed - B;
+    if (!B && totalExposed) B = totalExposed - A;
+    if (!C && totalNotExposed) C = totalNotExposed - D;
+    if (!D && totalNotExposed) D = totalNotExposed - C;
+	
+	total = A + B + C + D;
+
+    $('#A').text(A);
+    $('#B').text(B);
+    $('#C').text(C);
+    $('#D').text(D);
+    $('#AB').text(A + B);
+    $('#AC').text(A + C);
+    $('#BD').text(B + D);
+    $('#CD').text(C + D);
+    $('#N').text(total);
+
+    $('#total').val(total);
+    $('#totalDisease').val(totalDisease);
+    $('#totalNoDisease').val(totalNoDisease);
+    $('#totalExposed').val(totalExposed);
+    $('#totalNotExposed').val(totalNotExposed);
+}
+
+function calculateRatios() {
+    var A = parseInt($('#exposedDisease').val()) || 0;
+    var B = parseInt($('#exposedNoDisease').val()) || 0;
+    var C = parseInt($('#notExposedDisease').val()) || 0;
+    var D = parseInt($('#notExposedNoDisease').val()) || 0;
+
+    var riskExposed = A / (A + B);
+    var riskUnexposed = C / (C + D);
+    var riskRatio = riskExposed / riskUnexposed;
+
+    var oddsExposed = A / (A + C);
+    var oddsUnexposed = B / (B + D);
+    var oddsRatio = oddsExposed / oddsUnexposed;
+
+    $('#riskRatioValue').text(`Risk Ratio = ${riskRatio.toFixed(2)}`);
+    $('#oddsRatio').text(`Odds Ratio = ${oddsRatio.toFixed(2)}`);
+
+    var riskRatioMessage = 'We can express the Relative Risk as: ';
+    if (riskRatio === 1) {
+        riskRatioMessage = `Exposure to ${$('#exposure').val()} had no association with ${$('#disease').val()}.`;
+    } else if (riskRatio > 1) {
+        riskRatioMessage = `${((riskRatio - 1) * 100).toFixed(2)}% higher risk for ${$('#disease').val()} in those exposed to ${$('#exposure').val()}.`;
+    } else {
+        riskRatioMessage = `${((1 - riskRatio) * 100).toFixed(2)}% lower risk for ${$('#disease').val()} in those exposed to ${$('#exposure').val()}.`;
+    }
+
+    $('#riskRatioMessage').text(riskRatioMessage);
+
+    var oddsRatioMessage = 'We can express the Relative Odds as: ';
+    if (oddsRatio === 1) {
+        oddsRatioMessage = `Odds of being exposed to ${$('#exposure').val()} was the same among those who developed ${$('#disease').val()} and those who did not develop ${$('#disease').val()}.`;
+    } else if (oddsRatio > 1) {
+        oddsRatioMessage = `${((oddsRatio - 1) * 100).toFixed(2)}% higher odds of being exposed to ${$('#exposure').val()} for those who developed ${$('#disease').val()}.`;
+    } else {
+        oddsRatioMessage = `${((1 - oddsRatio) * 100).toFixed(2)}% lower odds of being exposed to ${$('#exposure').val()} for those who developed ${$('#disease').val()}.`;
+    }
+
+    $('#oddsRatioMessage').text(oddsRatioMessage);
+
+
+}
+
+		
+		$('#disease, #exposure').on('input', function() {
+    var disease = $('#disease').val();
+    var exposure = $('#exposure').val();
+
+    $('span[id^="diseaseName"]').text(disease);
+    $('span[id^="exposureName"]').text(exposure);
+});
+
+$('input[type="number"]').on('blur', function() {
+    updateTable();
+    calculateRatios();
+});
+});
+
+</script>
+
+
+</body>
+</html>
