@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Data Entry</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .input-section,
+        .table-section {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        /* td {
+            padding: 5px;
+            border: 1px solid #ddd;
+            width: 80px;
+        } */
+
+        input[type="text"] {
+            width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Study Data Entry</h1>
+        <div class="input-section">
+            <label for="disease">What disease are you studying?</label>
+            <input type="text" id="disease" placeholder="Enter disease">
+            <label for="exposure">What exposure are you studying?</label>
+            <input type="text" id="exposure" placeholder="Enter exposure">
+            <button id="enterData">Enter the data collected in the study</button>
+        </div>
+        <div class="table-section" style="display:none;">
+            <p>Enter the numbers you have collected from your study in the table below. Note: you do not need to enter all numbers.
+                Once you have entered the numbers you have, you can compute the remaining values. If you enter numbers that do not 
+                add up correctly, we will highlight these inconsistencies for you.</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="2" rowspan="2"></th>
+                        <th colspan="2">Outcome Status</th>
+                        <th rowspan="2">Row Total</th>
+                    </tr>
+                    <tr>
+                        <th>Yes</th>
+                        <th>No</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th rowspan="2">Exposure Status</th>
+                        <th>Yes</th>
+                        <td>
+                            <input type="text" id="exposedDisease" placeholder="A = E+, O+" title="A = E+, O+"
+                                onmouseover="this.title = 'Of the people exposed to ' + $('#exposure').val() + ' during your study, how many developed ' + $('#disease').val() + '?'">
+                        </td>
+
+                        <td><input type="text" id="exposedNoDisease" placeholder="B = E+, O-" title="B = E+, O-"
+                            onmouseover="this.title = 'Of the people exposed to ' + $('#exposure').val() + ' during your study, how many did not develop ' + $('#disease').val() + '?'">
+                        </td>
+                        <td><input type="text" id="totalExposed" placeholder="E+ = A + B" title="E+ = A + B"
+                            onmouseover="this.title = 'What is the total number of people exposed to ' + $('#exposure').val() + ' during your study?'">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>No</th>
+                        <td><input type="text" id="notExposedDisease" placeholder="C = E-, O+" title="C = E-, O+"
+                            onmouseover="this.title = 'Of the people not exposed to ' + $('#exposure').val() + ' during your study, how many developed ' + $('#disease').val() + '?'">
+                        </td>
+                        <td><input type="text" id="notExposedNoDisease" placeholder="D = E-, O-" title="D = E-, O-"
+                            onmouseover="this.title = 'Of the people not exposed to ' + $('#exposure').val() + ' during your study, how many did not develop ' + $('#disease').val() + '?'">
+                        </td>
+                        <td><input type="text" id="totalNotExposed" placeholder="E- = C + D" title="E- = C + D"
+                            onmouseover="this.title = 'What is the total number of people not exposed to ' + $('#exposure').val() + ' during your study?'">
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="2">Column Total</th>
+                        <td><input type="text" id="totalDisease" placeholder="O+ = A + C" title="O+ = A + C"
+                            onmouseover="this.title = 'What is the total number of people who developed ' + 
+                            $('#disease').val() + '?'">
+                        </td>
+                        <td><input type="text" id="totalNoDisease" placeholder="O- = B + D" title="O- = B + D"
+                            onmouseover="this.title = 'What is the total number of people who did not develop ' + 
+                            $('#disease').val() + '?'">
+                        </td>
+                        <td><input type="text" id="totalSum" placeholder="N = ALL" title="N = ALL"
+                            onmouseover="this.title = 'What is the total number of people in your study?'">
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+            <p><button id="computeValidate">Compute Missing Numbers and Validate Entries</button></p>
+
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#enterData').click(function () {
+                $('.table-section').show();
+                var disease = $('#disease').val();
+                var exposure = $('#exposure').val();
+                var titleText = 'Of the people exposed to ' + exposure + ' during your study, how many developed ' + disease + '?';
+                $('#number1').attr('title', titleText);
+            });
+        });
+
+    $('#computeValidate').click(function() {
+        var exposedDisease = $('#exposedDisease').val() ? parseInt($('#exposedDisease').val()) : undefined;
+        var exposedNoDisease = $('#exposedNoDisease').val() ? parseInt($('#exposedNoDisease').val()) : undefined;
+        var notExposedDisease = $('#notExposedDisease').val() ? parseInt($('#notExposedDisease').val()) : undefined;
+        var notExposedNoDisease = $('#notExposedNoDisease').val() ? parseInt($('#notExposedNoDisease').val()) : undefined;
+        var totalExposed = $('#totalExposed').val() ? parseInt($('#totalExposed').val()) : undefined;
+        var totalNotExposed = $('#totalNotExposed').val() ? parseInt($('#totalNotExposed').val()) : undefined;
+        var totalDisease = $('#totalDisease').val() ? parseInt($('#totalDisease').val()) : undefined;
+        var totalNoDisease = $('#totalNoDisease').val() ? parseInt($('#totalNoDisease').val()) : undefined;
+        var totalSum = $('#totalSum').val() ? parseInt($('#totalSum').val()) : undefined;
+
+        var updatedVals = true;
+
+        while (updatedVals) {
+            // Compute missing values
+            updatedVals = false;
+
+            // E+ = A + B
+            if (totalExposed === undefined && exposedDisease !== undefined && exposedNoDisease !== undefined) {
+                totalExposed = exposedDisease + exposedNoDisease;
+                updatedVals = true;
+                $('#totalExposed').attr('title', $('#totalExposed').attr('title') + ' E+ computed as: ' + 'E+,O+ (' + exposedDisease - ') + E+,O- (' + exposedNoDisease + ')');
+            }
+            if (exposedDisease === undefined && totalExposed !== undefined && exposedNoDisease !== undefined) {
+                exposedDisease = totalExposed - exposedNoDisease;
+                updatedVals = true;
+                $('#exposedDisease').attr('title', $('#exposedDisease').attr('title') + ' E+,O+ computed as: ' + 'E+ (' + totalExposed - ') - E+,O- (' + exposedNoDisease + ')');
+            }
+            if (exposedNoDisease === undefined && totalExposed !== undefined && exposedDisease !== undefined) {
+                exposedNoDisease = totalExposed - exposedDisease;
+                updatedVals = true;
+                $('#exposedNoDisease').attr('title', $('#exposedNoDisease').attr('title') + ' E+,O- computed as: ' + 'E+ (' + totalExposed - ') - E+,O+ (' + exposedDisease + ')');
+            }
+
+            // E- = C + D
+            if (totalNotExposed === undefined && notExposedDisease !== undefined && notExposedNoDisease !== undefined) {
+                totalNotExposed = notExposedDisease + notExposedNoDisease;
+                updatedVals = true;
+                $('#totalNotExposed').attr('title', $('#totalNotExposed').attr('title') + ' E- computed as: ' + 'E-,O+ (' + notExposedDisease - ') + E-,O- (' + notExposedNoDisease + ')');
+            }
+            if (notExposedDisease === undefined && totalNotExposed !== undefined && notExposedNoDisease !== undefined) {
+                notExposedDisease = totalNotExposed - notExposedNoDisease;
+                updatedVals = true;
+                $('#notExposedDisease').attr('title', $('#notExposedDisease').attr('title') + ' E-,O+ computed as: ' + 'E- (' + totalNotExposed - ') - E-,O- (' + notExposedNoDisease + ')');
+            }
+            if (notExposedNoDisease === undefined && totalNotExposed !== undefined && notExposedDisease !== undefined) {
+                notExposedNoDisease = totalNotExposed - notExposedDisease;
+                updatedVals = true;
+                $('#notExposedNoDisease').attr('title', $('#notExposedNoDisease').attr('title') + ' E-,O- computed as: ' + 'E- (' + totalNotExposed - ') - E-,O+ (' + notExposedDisease + ')');
+            }
+
+            // O+ = A + C
+            if (totalDisease === undefined && exposedDisease !== undefined && notExposedDisease !== undefined) {
+                totalDisease = exposedDisease + notExposedDisease;
+                updatedVals = true;
+                $('#totalDisease').attr('title', $('#totalDisease').attr('title') + ' O+ computed as: ' + 'E+,O+ (' + exposedDisease - ') + E-,O+ (' + notExposedDisease + ')');
+            }
+            if (exposedDisease === undefined && totalDisease !== undefined && exposedDisease !== undefined) {
+                exposedDisease = totalDisease - notExposedDisease;
+                updatedVals = true;
+                $('#exposedDisease').attr('title', $('#exposedDisease').attr('title') + ' E+,O+ computed as: ' + 'O+ (' + totalDisease - ') - E-,O+ (' + notExposedDisease + ')');
+            }
+            if (notExposedDisease === undefined && totalDisease !== undefined && exposedDisease !== undefined) {
+                notExposedDisease = totalDisease - exposedDisease;
+                updatedVals = true;
+                $('#notExposedDisease').attr('title', $('#notExposedDisease').attr('title') + ' E-,O+ computed as: ' + 'O+ (' + totalDisease - ') - E+,O+ (' + exposedDisease + ')');
+            }
+
+            // O- = B + D
+            if (totalNoDisease === undefined && exposedNoDisease !== undefined && notExposedNoDisease !== undefined) {
+                totalNoDisease = exposedNoDisease + notExposedNoDisease;
+                updatedVals = true;
+                $('#totalNoDisease').attr('title', $('#totalNoDisease').attr('title') + ' O- computed as: ' + 'E+,O- (' + exposedNoDisease - ') + E-,O- (' + notExposedNoDisease + ')');
+            }
+            if (exposedNoDisease === undefined && totalNoDisease !== undefined && notExposedNoDisease !== undefined) {
+                exposedNoDisease = totalNoDisease - notExposedNoDisease;
+                updatedVals = true;
+                $('#exposedNoDisease').attr('title', $('#exposedNoDisease').attr('title') + ' E+,O- computed as: ' + 'O- (' + totalNoDisease - ') - E-,O- (' + notExposedNoDisease + ')');
+            }
+            if (notExposedNoDisease === undefined && totalNoDisease !== undefined && exposedNoDisease !== undefined) {
+                notExposedNoDisease = totalNoDisease - exposedNoDisease;
+                updatedVals = true;
+                $('#notExposedNoDisease').attr('title', $('#notExposedNoDisease').attr('title') + ' E-,O- computed as: ' + 'O- (' + totalNoDisease - ') - E+,O- (' + exposedNoDisease + ')');
+            }
+
+            // N = E+ + E-
+            if (totalSum === undefined && totalExposed !== undefined && totalNotExposed !== undefined) {
+                totalSum = totalExposed + totalNotExposed;
+                updatedVals = true;
+                $('#totalSum').attr('title', $('#totalSum').attr('title') + ' N computed as: ' + 'E+ (' + totalExposed + ') + E- (' + totalNotExposed + ')');
+            }
+            if (totalExposed === undefined && totalSum !== undefined && totalNotExposed !== undefined) {
+                totalExposed = totalSum - totalNotExposed;
+                updatedVals = true;
+                $('#totalExposed').attr('title', $('#totalExposed').attr('title') + ' E+ computed as: ' + 'N (' + totalSum + ') - E- (' + totalNotExposed + ')');
+            }
+            if (totalNotExposed === undefined && totalSum !== undefined && totalExposed !== undefined) {
+                totalNotExposed = totalSum - totalExposed;
+                updatedVals = true;
+                $('#totalNotExposed').attr('title', $('#totalNotExposed').attr('title') + ' E- computed as: ' + 'N (' + totalSum + ') - E+ (' + totalExposed + ')');
+            }
+
+            // N = O+ + O-
+            if (totalSum === undefined && totalDisease !== undefined && totalNoDisease !== undefined) {
+                totalSum = totalDisease + totalNoDisease;
+                updatedVals = true;
+                $('#totalSum').attr('title', $('#totalSum').attr('title') + ' N computed as: ' + 'O+ (' + totalDisease + ') + O- (' + totalNoDisease + ')');
+            }
+            if (totalDisease === undefined && totalSum !== undefined && totalNoDisease !== undefined) {
+                totalDisease = totalSum - totalNoDisease;
+                updatedVals = true;
+                $('#totalDisease').attr('title', $('#totalDisease').attr('title') + ' O+ computed as: ' + 'N (' + totalSum + ') - O- (' + totalNoDisease + ')');
+            }
+            if (totalNoDisease === undefined && totalSum !== undefined && totalDisease !== undefined) {
+                totalNoDisease = totalSum - totalDisease;
+                updatedVals = true;
+                $('#totalNoDisease').attr('title', $('#totalNoDisease').attr('title') + ' O- computed as: ' + 'N (' + totalSum + ') - O+ (' + totalDisease + ')');
+            }
+        }
+
+    // Highlight computed values
+    if ($('#exposedDisease').val() === '') {
+        if (exposedDisease !== undefined) {
+            $('#exposedDisease').val(exposedDisease).css('background-color', '#d4edda');
+        } else {
+            $('#exposedDisease').css('background-color', '#f8d7da');
+        }
+    }
+    if ($('#exposedNoDisease').val() === '') {
+        if (exposedNoDisease !== undefined) {
+            $('#exposedNoDisease').val(exposedNoDisease).css('background-color', '#d4edda');
+        } else {
+            $('#exposedNoDisease').css('background-color', '#f8d7da');
+        }
+    }
+    if ($('#notExposedDisease').val() === '') {
+        if (notExposedDisease !== undefined) {
+            $('#notExposedDisease').val(notExposedDisease).css('background-color', '#d4edda');
+        } else {
+            $('#notExposedDisease').css('background-color', '#f8d7da');
+        }
+    }
+    if ($('#notExposedNoDisease').val() === '') {
+        if (notExposedNoDisease !== undefined) {
+            $('#notExposedNoDisease').val(notExposedNoDisease).css('background-color', '#d4edda');
+        } else {
+            $('#notExposedNoDisease').css('background-color', '#f8d7da');
+        }
+    }
+    if ($('#totalExposed').val() === '') {
+        if (totalExposed !== undefined) {
+            $('#totalExposed').val(totalExposed).css('background-color', '#d4edda');
+        } else {
+            $('#totalExposed').css('background-color', '#f8d7da');
+        }
+    }
+    if ($('#totalNotExposed').val() === '') {
+        if (totalNotExposed !== undefined) {
+            $('#totalNotExposed').val(totalNotExposed).css('background-color', '#d4edda');
+        } else {
+            $('#totalNotExposed').css('background-color', '#f8d7da');
+        }
+    }
+    if ($('#totalDisease').val() === '') {
+        if (totalDisease !== undefined) {
+            $('#totalDisease').val(totalDisease).css('background-color', '#d4edda');
+        } else {
+            $('#totalDisease').css('background-color', '#f8d7da');
+        }
+    }
+    if ($('#totalNoDisease').val() === '') {
+        if (totalNoDisease !== undefined) {
+            $('#totalNoDisease').val(totalNoDisease).css('background-color', '#d4edda');
+        } else {
+            $('#totalNoDisease').css('background-color', '#f8d7da');
+        }
+    }
+    if ($('#totalSum').val() === '') {
+        if (totalSum !== undefined) {
+            $('#totalSum').val(totalSum).css('background-color', '#d4edda');
+        } else {
+            $('#totalSum').css('background-color', '#f8d7da');
+        }
+    }
+
+
+
+// Validate values
+if (totalSum !== totalExposed + totalNotExposed || totalSum !== totalDisease + totalNoDisease) {
+    $('#totalSum').css('background-color', '#f8d7da');
+}
+        
+        if (exposedDisease != undefined && ($('#exposedDisease').val() === '')) {
+            $('#exposedDisease').val(exposedDisease).css('background-color', '#d4edda');
+        }
+        if ($('#exposedDisease').val() === '') {
+            $('#exposedDisease').val(exposedDisease).css('background-color', '#d4edda');
+            $('#exposedDisease').attr('title', $('#exposedDisease').attr('title') + ' Computed as: ' + 'E+ (' + totalExposed + ') - B (' + exposedNoDisease + ')');
+        }
+
+        if ($('#totalExposed').val() === '') {
+            $('#totalExposed').val(totalExposed).css('background-color', '#d4edda');
+            $('#totalExposed').attr('title', $('#totalExposed').attr('title') + ' Computed as: ' + exposedDisease + ' + ' + exposedNoDisease);
+        }
+        if ($('#totalNotExposed').val() === '') {
+            $('#totalNotExposed').val(totalNotExposed).css('background-color', '#d4edda');
+            $('#totalNotExposed').attr('title', $('#totalNotExposed').attr('title') + ' Computed as: ' + notExposedDisease + ' + ' + notExposedNoDisease);
+        }
+        if ($('#totalDisease').val() === '') {
+            $('#totalDisease').val(totalDisease).css('background-color', '#d4edda');
+            $('#totalDisease').attr('title', $('#totalDisease').attr('title') + ' Computed as: ' + exposedDisease + ' + ' + notExposedDisease);
+        }
+        if ($('#totalNoDisease').val() === '') {
+            $('#totalNoDisease').val(totalNoDisease).css('background-color', '#d4edda');
+            $('#totalNoDisease').attr('title', $('#totalNoDisease').attr('title') + ' Computed as: ' + exposedNoDisease + ' + ' + notExposedNoDisease);
+        }
+        if ($('#totalSum').val() === '') {
+            $('#totalSum').val(totalSum).css('background-color', '#d4edda');
+            $('#totalSum').attr('title', $('#totalSum').attr('title') + ' Computed as: ' + totalExposed + ' + ' + totalNotExposed);
+        }
+
+        // Validate values
+        if (totalSum !== totalExposed + totalNotExposed || totalSum !== totalDisease + totalNoDisease) {
+            $('#totalSum').css('background-color', '#f8d7da');
+            $('#totalSum').attr('title', $('#totalSum').attr('title') + ' Values do not add up correctly.');
+        }
+    });
+
+
+    </script>
+</body>
+
+</html>
