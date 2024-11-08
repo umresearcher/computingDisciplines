@@ -1,73 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Risk Ratio and Odds Ratio</title>
+    <title>Study Data Entry</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
         }
+
         .container {
-            max-width: 800px;
+            max-width: 600px;
             margin: auto;
         }
-        .fraction {
-            display: inline-block;
-            vertical-align: middle;
-            margin: 0 5px;
+
+        .input-section,
+        .table-section {
+            margin-bottom: 20px;
         }
-        .fraction > span {
+
+        label {
             display: block;
-            text-align: center;
+            margin-bottom: 5px;
         }
-        .fraction span.numerator {
-            border-bottom: 1px solid #000;
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
         }
-        .table-container {
-            margin-top: 20px;
+
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
         }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
         }
-        table, th, td {
+
+        table,
+        th,
+        td {
             border: 1px solid black;
         }
-        th, td {
+
+        th,
+        td {
             padding: 10px;
             text-align: center;
         }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        #ratiosSection {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+
+        /* Container for the buttons */
+        .button-container {
+            display: flex;
+            justify-content: space-around; /* Distribute space evenly */
+            align-items: center; /* Center align items vertically */
+            margin: 20px 0; /* Add some margin around the container */
+        }
+
+        /* Style for the buttons */
+        .button-container button {
+            padding: 10px 20px; /* Add padding to the buttons */
+            margin: 5px; /* Add some margin between buttons */
+            border: 1px solid #007BFF; /* Add a border with a blue color */
+            background-color: #007BFF; /* Blue background */
+            color: white; /* White text */
+            font-size: 16px; /* Increase font size */
+            cursor: pointer; /* Pointer cursor on hover */
+            transition: background-color 0.3s, color 0.3s; /* Smooth background and text color transition */
+        }
+
+        .button-container button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+            color: #ffffff; /* Ensure text remains white on hover */
+        }
+
+        /* Tooltip container */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        /* Tooltip text */
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 220px;
+            background-color: #777;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%; /* Position above the text */
+            left: 50%;
+            margin-left: -110px; /* Center the tooltip */
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        /* Tooltip arrow */
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%; /* At the bottom of the tooltip */
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+
+        /* Show the tooltip text when hovering */
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        .fraction {
+            display: inline-block;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .fraction > span {
+            display: block;
+        }
+        .fraction .numerator {
+            border-bottom: 2px solid #000;
+        }
+        .fraction .denominator {
+            margin-top: -5px;
+        }
+
     </style>
 </head>
+
 <body>
     <div class="container">
-        <h1>Risk Ratio and Odds Ratio</h1>
-        <p>Two fundamental ratios that study whether there is an association between an <b>exposure</b> and an <b>outcome</b> occurrence are (1) Risk Ratio, and (2) Odds Ratio.</p> 
-		<p>Note that in epidemiology, <b>exposure</b> is defined as a factor that may be associated with an outcome. An <b>outcome</b> could be a disease that we are studying.</p>
-        <p>Risk Ratio compares risk for a disease between groups exposed to the factor and groups not exposed to the factor. Odds Ratio compares odds of exposure to the factor between disease cases and control cases.</p>
-		<p>Note that in epidemiology, <b>disease cases</b> are the group of people who have the outcome that we are studying; <b>control cases</b> are the group of people who do not have the outcome that we are studying.</p>
-        
-        <p>
-            Risk Ratio = 
-            <span class="fraction">
-                <span class="numerator">risk of disease in exposed</span>
-                <span class="denominator">risk of disease in unexposed</span>
-            </span>
-        </p>
-        <p>
-            Odds Ratio = 
-            <span class="fraction">
-                <span class="numerator">odds of exposure among disease cases</span>
-                <span class="denominator">odds of exposure among control cases</span>
-            </span>
-        </p>
-		
-		<p>Risk is the same as Incidence, which we learnt earlier at <a href="IncidenceProportionCalculator.html">Incidence Proportion Calculator</a>. Note that we use the same Multiplier while calculating the risk of disease in exposed (numerator of the Risk Ratio), and while calculating the risk of disease in unexposed (denominator of the Risk Ratio).</p>
-		
+        <h1>Study Data Entry</h1>
+        <div class="input-section">
+            <label for="disease">What outcome are you studying?</label>
+            <input type="text" id="disease" placeholder="Enter outcome">
+            <label for="exposure">What exposure are you studying?</label>
+            <input type="text" id="exposure" placeholder="Enter exposure">
+            <button id="enterData">Enter the data collected in the study</button>
+        </div>
+        <div class="table-section" style="display:none;">
+            <p>Enter the numbers you have collected from your study in the table below. Note: you do not need to enter all numbers.
+                Once you have entered the numbers you have, you can compute the remaining values. If you enter numbers that do not 
+                add up correctly, we will highlight these inconsistencies for you.</p>
 
-        <div class="table-container">
             <table>
                 <thead>
                     <tr>
@@ -84,426 +190,423 @@
                     <tr>
                         <th rowspan="2">Exposure Status</th>
                         <th>Yes</th>
-                        <td>A = E+, O+</td>
-                        <td>B = E+, O-</td>
-                        <th>A + B = E+</th>
+                        <td><input type="text" id="exposedDisease" placeholder="A = E+, O+"></td>
+                        <td><input type="text" id="exposedNoDisease" placeholder="B = E+, O-"></td>
+                        <td><input type="text" id="totalExposed" placeholder="E+ = A + B"></td>
                     </tr>
                     <tr>
                         <th>No</th>
-                        <td>C = E-, O+</td>
-                        <td>D = E-, O-</td>
-						<th>C + D = E-</th>
+                        <td><input type="text" id="notExposedDisease" placeholder="C = E-, O+"></td>
+                        <td><input type="text" id="notExposedNoDisease" placeholder="D = E-, O-"></td>
+                        <td><input type="text" id="totalNotExposed" placeholder="E- = C + D"></td>
                     </tr>
                 </tbody>
                 <tfoot>
                     <tr>
                         <th colspan="2">Column Total</th>
-                        <th>A + C = O+</th>
-                        <th>B + D = O-</th>
-                        <th>N = ALL</th>
+                        <td><input type="text" id="totalDisease" placeholder="O+ = A + C"></td>
+                        <td><input type="text" id="totalNoDisease" placeholder="O- = B + D"></td>
+                        <td><input type="text" id="totalSum" placeholder="N = ALL"></td>
                     </tr>
                 </tfoot>
             </table>
+            <div class="button-container">
+                <button id="computeMissing">Compute Missing Numbers</button>
+                <button id="validateButton">Validate Numbers</button>
+                <button id="clearButton">Clear Table</button>
+                <button id="computeRatiosButton">Compute Risks and Odds Ratios</button>
+            </div>
+
+        </div>
+        <div id="ratiosSection" style="display: none;">
+            <h3>Results</h3>
+            <p>Risk Ratio: <span id="riskRatioDisplay" class="tooltip">[Risk Ratio]</span></p>
+            <p>Odds Ratio: <span id="oddsRatioPlaceholder" class="tooltip">[Odds Ratio]</span></p>
         </div>
 
-
-        <p>In the above table,</p>
-		<p>
-		A = number of people exposed (E+) and developed the outcome during the study (O+)<br/>
-        B = number of people exposed (E+) and did not develop the outcome during the study (O-)<br/>
-        C = number of people who were not exposed (E-) and developed the outcome during the study (O+)<br/>
-        D = number of people who were not exposed (E-) and did not develop the outcome during the study (O-)<br/></p>
-		
-		<hr>
-		
-		<p> Based on the above we can examine some totals as follows:<br/><br/>
-        <b>N</b> = the total number of people in our study = A + B + C + D<br/><br/>
-
-		<b>(A + B)</b> = the number of people who were exposed to the factor in our study(E+) (Note that some of them developed the outcome and some of them did not develop the outcome during the study)<br/>
-		<b>(C + D)</b> = the number of people who were not exposed to the factor in our study (E-) (Note that some of them developed the outcome and some of them did not develop the outcome during the study)<br/><br/>
-
-		<b>(A + C)</b> = the number of people who developed the outcome during our study (O+) (Note that some of them were exposed to the factor and some of them were not exposed to the factor in our study)<br/>
-		<b>(B + D)</b> = the number of people who did not develop the outcome during our study (O-) (Note that some of them were exposed to the factor and some of them were not exposed to the factor in our study)
-		
-		</p>
-
-        <hr>
-
-        <p>To calculate Risk Ratio, we need to calculate:</p>
-        <p>
-            risk of disease in exposed = 
-            <span class="fraction">
-                <span class="numerator">number of disease in exposed</span>
-                <span class="denominator">number of exposed</span>
-            </span>
-            = 
-            <span class="fraction">
-                <span class="numerator">A</span>
-                <span class="denominator">A + B</span>
-            </span>
-        </p>
-        <p>
-            risk of disease in unexposed = 
-            <span class="fraction">
-                <span class="numerator">number of disease in unexposed</span>
-                <span class="denominator">number of unexposed</span>
-            </span>
-            = 
-            <span class="fraction">
-                <span class="numerator">C</span>
-                <span class="denominator">C + D</span>
-            </span>
-        </p>
-        <p>
-            Risk Ratio = 
-            <span class="fraction">
-                <span class="numerator">risk of disease in exposed</span>
-                <span class="denominator">risk of disease in unexposed</span>
-            </span> =
-            <span class="fraction">
-                <span class="numerator">A / (A + B)</span>
-                <span class="denominator">C / (C + D)</span>
-            </span>
-        </p>
-				
-        <hr>
-
-        <p>To calculate Odds Ratio, we need to calculate:</p>
-        <p>
-            odds of exposure among disease cases = 
-            <span class="fraction">
-                <span class="numerator">number of exposed among those with disease</span>
-                <span class="denominator">number with disease</span>
-            </span>
-            = 
-            <span class="fraction">
-                <span class="numerator">A</span>
-                <span class="denominator">A + C</span>
-            </span>
-        </p>
-        <p>
-            odds of exposure among control cases = 
-            <span class="fraction">
-                <span class="numerator">number of exposed among those without disease</span>
-                <span class="denominator">number without disease</span>
-            </span>
-            = 
-            <span class="fraction">
-                <span class="numerator">B</span>
-                <span class="denominator">B + D</span>
-            </span>
-        </p>
-        <p>
-            Odds Ratio = 
-            <span class="fraction">
-                <span class="numerator">odds of exposure among disease cases</span>
-                <span class="denominator">odds of exposure among control cases</span>
-            </span> =
-            <span class="fraction">
-                <span class="numerator">A / (A + C)</span>
-                <span class="denominator">B / (B + D)</span>
-            </span>
-        </p>
-
-		<hr>
-		<p>Suppose a study calculates the risk ratio as above, and comes up with the number r. Let us examine what this means more carefully. Suppose we have a population of p that are not exposed to the factor, and of those, n people develop the outcome. The question we need to ask is: suppose we have a population of p that are exposed to the factor, how may of those are likely to develop the outcome? The answer to that is r * n. When n = 1, then the number of people who are likely to develop the outcome (among the same number of people p) when exposed to the factor is r.
-		</p>
-		
-		<p>In our studies, we compare r and 1, these three are possible scenarios.
-		<ul>
-		<li>r = 1. This means that the exposure to the factor did not impact the occurrence of the outcome (no association).
-		<li>r &gt; 1. This means that the exposure to the factor increased the possibility of the occurrence of the outcome.
-		<li>r &lt; 1. This means that the exposure to the factor decreased the possibility of the occurrence of the outcome.		
-		</ul>
-		</p>
-
-		<p>Instead of looking at r, we often use the term <b>Relative Risk</b> = (r - 1). As you can see Relative Risk can be 0 (indicating no association), positive (indicating higher risk to outcome when exposed to the factor), or negative (indicating lower risk to outcome when exposed to the factor). Based on the value for (r - 1), we can specify the result of our study as follows:
-		
-		<ul>
-		<li>If Relative Risk = 0, we say that our study showed: exposure to the factor had no association with the outcome.
-		<li>If Relative Risk &gt; 0, we say that our study showed: (r - 1) higher risk for the outcome in those exposed to the factor.<br/>
-		Note that we typically show the Relative Risk as percentage and say: (r - 1) * 100% higher risk for the outcome in those exposed to the factor.
-		<li>If Relative Risk &lt; 0, we say that our study showed: |(r - 1)| lower risk for the outcome in those exposed to the factor. See that we take the absolute value so that we change the negative (r - 1) to a positive value.<br/>
-		Again, we typically show the Relative Risk as percentage and say: |(r - 1)| * 100% lower risk for the outcome in those exposed to the factor.
-		
-		</ul>
-		</p>
-
-		<p>Similarly suppose a study calculates the odds ratio as above, and comes up with the number r. Just like for risk ratio, we compute Relative Odds = (r - 1). Based on the value for (r - 1), we can specify the result of our study as follows:
-		
-		<ul>
-		<li>If Relative Odds = 0, we say that our study showed: odds of being exposed to the factor was the same among those who developed the outcome and those who did not develop the outcome.
-		<li>If Relative Odds &gt; 0, we say that our study showed: odds of being exposed to the factor is (r - 1) higher for those who developed the outcome.<br/>
-		Expressing Relative Odds as percentage we say: (r - 1) * 100% higher odds of being exposed to the factor for those who developed the outcome.
-		<li>If Relative Odds &lt; 0, we say that our study showed: odds of being exposed to the factor is |(r - 1)| lower for those who developed the outcome (using absolute value just like for Relative Risk).<br/>
-		Expressing Relative Odds as percentage we say: |(r - 1)| * 100% lower odds of being exposed to the factor for those who developed the outcome.
-		
-		</ul>
-		
-		</p>
-
-
-
     </div>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<hr>
+    <script>
+        var origMessages = {
+            "exposedDisease": "A = E+,O+",
+            "exposedNoDisease": "B = E+, O-",
+            "totalExposed": "E+ = A + B",
+            "notExposedDisease": "C = E-, O+",
+            "notExposedNoDisease": "D = E-, O-",
+            "totalNotExposed": "E- = C + D",
+            "totalDisease": "O+ = A + C",
+            "totalNoDisease": "O- = B + D",
+            "totalSum": "N = ALL"
+        };
 
-<div class="pane">
-    <h2>Calculator</h2>
-    <p>What disease are you studying?</p>
-    <input type="text" id="disease" placeholder="Enter disease">
-    <p>What exposure are you studying?</p>
-    <input type="text" id="exposure" placeholder="Enter exposure">
-    <button id="nextStep">Go to the next step</button>
-</div>
+        var ids = ['#exposedDisease', '#exposedNoDisease', '#totalExposed', '#notExposedDisease', '#notExposedNoDisease', '#totalNotExposed', '#totalDisease', '#totalNoDisease', '#totalSum'];
 
-<div id="nextPane" style="display: none;">
-    <div class="pane">
-        <h2>Calculator</h2>
-        <p>Please fill in the values that are known. Leave those that are not known to you blank and they will be automatically calculated based on values that are known.</p>
-        <p><input type="number" id="total" placeholder="Enter total number"> &nbsp; What is the total number of people in your study?</p>
-        
-        <p><input type="number" id="totalDisease" placeholder="Enter number"> &nbsp; What is the total number of people who developed <span id="diseaseName1">{disease}</span> by the end of your study? </p>
-        
-        <p><input type="number" id="totalNoDisease" placeholder="Enter number"> &nbsp; What is the total number of people who did not develop <span id="diseaseName2">{disease}</span> at the end of your study ?</p>
-        
-        <p><input type="number" id="totalExposed" placeholder="Enter number"> &nbsp; What is the total number of people who were exposed to <span id="exposureName1">{exposure}</span> during the study?</p>
-        
-        <p><input type="number" id="totalNotExposed" placeholder="Enter number"> &nbsp; What is the total number of people who were not exposed to <span id="exposureName2">{exposure}</span> during your study?</p>
-        
-        <p><input type="number" id="exposedDisease" placeholder="Enter number"> &nbsp; Of the people exposed to <span id="exposureName3">{exposure}</span> during your study, how many developed <span id="diseaseName3">{disease}</span>?</p>
-        
-        <p><input type="number" id="exposedNoDisease" placeholder="Enter number"> &nbsp; Of the people exposed to <span id="exposureName4">{exposure}</span> during your study, how many did not develop <span id="diseaseName4">{disease}</span>?</p>
-        
-        <p><input type="number" id="notExposedDisease" placeholder="Enter number"> &nbsp; Of the people not exposed to <span id="exposureName5">{exposure}</span> during your study, how many developed <span id="diseaseName5">{disease}</span>?</p>
-        
-        <p><input type="number" id="notExposedNoDisease" placeholder="Enter number"> &nbsp; Of the people not exposed to <span id="exposureName6">{exposure}</span> during your study, how many did not develop <span id="diseaseName6">{disease}</span>?</p>
-        
-    </div>
+        var colorError = 'rgb(255, 0, 0)';
+        var colorComputed = 'rgb(212, 237, 218)'; 
+        var colorMissing = 'rgb(248, 215, 218)';
 
-    <div class="pane">
-        <h2>Outcome Status * Disease Status Table</h2>
-        <table>
-                <thead>
-                    <tr>
-                        <th colspan="2" rowspan="2"></th>
-                        <th colspan="2">Disease Status</th>
-                        <th rowspan="2">Row Total</th>
-                    </tr>
-                    <tr>
-                        <th>Yes</th>
-                        <th>No</th>
-                    </tr>
-                </thead>
-            <tbody>
-                <tr>
-                    <th rowspan="2">Exposure Status</th>
-                    <th>Yes</th>
-                    <td id="A">A</td>
-                    <td id="B">B</td>
-                    <th id="AB">A + B</td>
-                </tr>
-                <tr>
-                    <th>No</th>
-                    <td id="C">C</td>
-                    <td id="D">D</td>
-					<th id="CD">C + D</th>
-                </tr>
-            </tbody>
-            <tfoot>
-                <tr>
-                    <th colspan="2">Column Total</th>
-                    <th id="AC">A + C</th>
-                    <th id="BD">B + D</th>
-                    <th id="N">N</th>
-                </tr>
-            </tfoot>
-        </table>
-    </div>
-	
-<div class="pane">
-    <h2>Results</h2>
-    <p id="riskRatioValue">Risk Ratio: N/A</p>
-    <p id="riskRatioMessage"></p>
-    <p>Odds Ratio: <span id="oddsRatio">N/A</span></p>
-    <p id="oddsRatioMessage"></p>
-</div>
-	
-</div>
+        function displayRatiosError() {
+            var message = 'Make sure there are no missing numbers in the table and the numbers add up before ratios can be computed.';
+            $('#computeRatiosButton').attr('title', message);
+        }
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('#nextStep').click(function() {
-            $('#nextPane').show();
+        function clearRatiosError() {
+            $('#computeRatiosButton').removeAttr('title');
+        }
+
+        function updateTextBox(el, newVal, msg) {
+            // var newTitle = el.attr('title') + ' ' + msg;
+            el.removeAttr('title');
+            el.attr('title',msg);
+            el.val(newVal).css('background-color', colorComputed);
+        }
+
+        function computeMissing() {
+            $.each(ids, function(index, id) {
+                if ($(id).css('background-color') && 
+                        ($(id).css('background-color') === colorError || $(id).css('background-color') === colorComputed)) {
+                    $(id).val(''); // Clear the value
+                    $(id).attr('title',origMessages[$(id).attr('id')]);
+                }
+            });
+
+            var exposedDisease = $('#exposedDisease').val() ? parseInt($('#exposedDisease').val()) : undefined;
+            var exposedNoDisease = $('#exposedNoDisease').val() ? parseInt($('#exposedNoDisease').val()) : undefined;
+            var notExposedDisease = $('#notExposedDisease').val() ? parseInt($('#notExposedDisease').val()) : undefined;
+            var notExposedNoDisease = $('#notExposedNoDisease').val() ? parseInt($('#notExposedNoDisease').val()) : undefined;
+            var totalExposed = $('#totalExposed').val() ? parseInt($('#totalExposed').val()) : undefined;
+            var totalNotExposed = $('#totalNotExposed').val() ? parseInt($('#totalNotExposed').val()) : undefined;
+            var totalDisease = $('#totalDisease').val() ? parseInt($('#totalDisease').val()) : undefined;
+            var totalNoDisease = $('#totalNoDisease').val() ? parseInt($('#totalNoDisease').val()) : undefined;
+            var totalSum = $('#totalSum').val() ? parseInt($('#totalSum').val()) : undefined;
+
+            $.each(ids,function(index, id) {
+                if ($(id).css('background-color') && $(id).css('background-color') === 'rgb(248, 215, 218)') {
+                    $(id).css('background-color', '');
+                }
+            });
+
+            var updatedVals = true;
+
+            while (updatedVals) {
+                // Compute and update missing values
+                updatedVals = false;
+
+                // E+ = A + B
+                if (totalExposed === undefined && exposedDisease !== undefined && exposedNoDisease !== undefined) {
+                    totalExposed = exposedDisease + exposedNoDisease;
+                    updatedVals = true;
+                    updateTextBox($('#totalExposed'), totalExposed, origMessages["totalExposed"] + ' ' +
+                        'E+ computed as: ' + 'E+,O+ (' + exposedDisease + ') + E+,O- (' + exposedNoDisease + ').');
+                }
+                if (exposedDisease === undefined && totalExposed !== undefined && exposedNoDisease !== undefined) {
+                    exposedDisease = totalExposed - exposedNoDisease;
+                    updatedVals = true;
+                    updateTextBox($('#exposedDisease'), exposedDisease, origMessages["exposedDisease"] + ' ' +
+                        'E+,O+ computed as: ' + 'E+ (' + totalExposed + ') - E+,O- (' + exposedNoDisease + ').');
+                }
+                if (exposedNoDisease === undefined && totalExposed !== undefined && exposedDisease !== undefined) {
+                    exposedNoDisease = totalExposed - exposedDisease;
+                    updatedVals = true;
+                    updateTextBox($('#exposedNoDisease'), exposedNoDisease, origMessages["exposedNoDisease"] + ' ' +
+                        'E+,O- computed as: ' + 'E+ (' + totalExposed + ') - E+,O+ (' + exposedDisease + ').');
+                }
+
+                // E- = C + D
+                if (totalNotExposed === undefined && notExposedDisease !== undefined && notExposedNoDisease !== undefined) {
+                    totalNotExposed = notExposedDisease + notExposedNoDisease;
+                    updatedVals = true;
+                    updateTextBox($('#totalNotExposed'), totalNotExposed, origMessages["totalNotExposed"] + ' ' +
+                        'E- computed as: ' + 'E-,O+ (' + notExposedDisease + ') + E-,O- (' + notExposedNoDisease + ').');
+                }
+                if (notExposedDisease === undefined && totalNotExposed !== undefined && notExposedNoDisease !== undefined) {
+                    notExposedDisease = totalNotExposed - notExposedNoDisease;
+                    updatedVals = true;
+                    updateTextBox($('#notExposedDisease'), notExposedDisease, origMessages["notExposedDisease"] + ' ' +
+                        'E-,O+ computed as: ' + 'E- (' + totalNotExposed + ') - E-,O- (' + notExposedNoDisease + ').');
+                }
+                if (notExposedNoDisease === undefined && totalNotExposed !== undefined && notExposedDisease !== undefined) {
+                    notExposedNoDisease = totalNotExposed - notExposedDisease;
+                    updatedVals = true;
+                    updateTextBox($('#notExposedNoDisease'), notExposedNoDisease, origMessages["notExposedNoDisease"] + ' ' +
+                        'E-,O- computed as: ' + 'E- (' + totalNotExposed + ') - E-,O+ (' + notExposedDisease + ').');
+                }
+
+                // O+ = A + C
+                if (totalDisease === undefined && exposedDisease !== undefined && notExposedDisease !== undefined) {
+                    totalDisease = exposedDisease + notExposedDisease;
+                    updatedVals = true;
+                    updateTextBox($('#totalDisease'), totalDisease, origMessages["totalDisease"] + ' ' +
+                        'O+ computed as: ' + 'E+,O+ (' + exposedDisease + ') + E-,O+ (' + notExposedDisease + ').');
+                }
+                if (exposedDisease === undefined && totalDisease !== undefined && exposedDisease !== undefined) {
+                    exposedDisease = totalDisease - notExposedDisease;
+                    updatedVals = true;
+                    updateTextBox($('#exposedDisease'), exposedDisease, origMessages["exposedDisease"] + ' ' +
+                        'E+,O+ computed as: ' + 'O+ (' + totalDisease + ') - E-,O+ (' + notExposedDisease + ').');
+                }
+                if (notExposedDisease === undefined && totalDisease !== undefined && exposedDisease !== undefined) {
+                    notExposedDisease = totalDisease - exposedDisease;
+                    updatedVals = true;
+                    updateTextBox($('#notExposedDisease'), notExposedDisease, origMessages["notExposedDisease"] + ' ' +
+                        'E-,O+ computed as: ' + 'O+ (' + totalDisease + ') - E+,O+ (' + exposedDisease + ').');
+                }
+
+                // O- = B + D
+                if (totalNoDisease === undefined && exposedNoDisease !== undefined && notExposedNoDisease !== undefined) {
+                    totalNoDisease = exposedNoDisease + notExposedNoDisease;
+                    updatedVals = true;
+                    updateTextBox($('#totalNoDisease'), totalNoDisease, origMessages["totalNoDisease"] + ' ' +
+                        'O- computed as: ' + 'E+,O- (' + exposedNoDisease + ') + E-,O- (' + notExposedNoDisease + ').');
+                }
+                if (exposedNoDisease === undefined && totalNoDisease !== undefined && notExposedNoDisease !== undefined) {
+                    exposedNoDisease = totalNoDisease - notExposedNoDisease;
+                    updatedVals = true;
+                    updateTextBox($('#exposedNoDisease'), exposedNoDisease, origMessages["exposedNoDisease"] + ' ' +
+                        'E+,O- computed as: ' + 'O- (' + totalNoDisease + ') - E-,O- (' + notExposedNoDisease + ').');
+                }
+                if (notExposedNoDisease === undefined && totalNoDisease !== undefined && exposedNoDisease !== undefined) {
+                    notExposedNoDisease = totalNoDisease - exposedNoDisease;
+                    updatedVals = true;
+                    updateTextBox($('#notExposedNoDisease'), notExposedNoDisease, origMessages["notExposedNoDisease"] + ' ' +
+                        'E-,O- computed as: ' + 'O- (' + totalNoDisease + ') - E+,O- (' + exposedNoDisease + ').');
+                }
+
+                // N = E+ + E-
+                if (totalSum === undefined && totalExposed !== undefined && totalNotExposed !== undefined) {
+                    totalSum = totalExposed + totalNotExposed;
+                    updatedVals = true;
+                    updateTextBox($('#totalSum'), totalSum, origMessages["totalSum"] + ' ' +
+                        'N computed as: ' + 'E+ (' + totalExposed + ') + E- (' + totalNotExposed + ').');
+                }
+                if (totalExposed === undefined && totalSum !== undefined && totalNotExposed !== undefined) {
+                    totalExposed = totalSum - totalNotExposed;
+                    updatedVals = true;
+                    updateTextBox($('#totalExposed'), totalExposed, origMessages["totalExposed"] + ' ' +
+                        'E+ computed as: ' + 'N (' + totalSum + ') - E- (' + totalNotExposed + ').');
+                }
+                if (totalNotExposed === undefined && totalSum !== undefined && totalExposed !== undefined) {
+                    totalNotExposed = totalSum - totalExposed;
+                    updatedVals = true;
+                    updateTextBox($('#totalNotExposed'), totalNotExposed, origMessages["totalNotExposed"] + ' ' +
+                        'E- computed as: ' + 'N (' + totalSum + ') - E+ (' + totalExposed + ').');
+                }
+
+                // N = O+ + O-
+                if (totalSum === undefined && totalDisease !== undefined && totalNoDisease !== undefined) {
+                    totalSum = totalDisease + totalNoDisease;
+                    updatedVals = true;
+                    updateTextBox($('#totalSum'), totalSum, origMessages["totalSum"] + ' ' +
+                        'N computed as: ' + 'O+ (' + totalDisease + ') + O- (' + totalNoDisease + ').');
+                }
+                if (totalDisease === undefined && totalSum !== undefined && totalNoDisease !== undefined) {
+                    totalDisease = totalSum - totalNoDisease;
+                    updatedVals = true;
+                    updateTextBox($('#totalDisease'), totalDisease, origMessages["totalDisease"] + ' ' +
+                        'O+ computed as: ' + 'N (' + totalSum + ') - O- (' + totalNoDisease + ').');
+                }
+                if (totalNoDisease === undefined && totalSum !== undefined && totalDisease !== undefined) {
+                    totalNoDisease = totalSum - totalDisease;
+                    updatedVals = true;
+                    updateTextBox($('#totalNoDisease'), totalNoDisease, origMessages["totalNoDisease"] + ' ' +
+                        'O- computed as: ' + 'N (' + totalSum + ') - O+ (' + totalDisease + ').');
+                }
+            }
+
+            $(ids).each(function(index, id) {
+                if (!$(id).val()) {
+                    $(id).css('background-color', colorMissing);
+                }
+            });
+
+            if (!validateNumbers()) {
+                displayRatiosError();
+            } else {
+                clearRatiosError();
+            }
+
+        }
+
+        function checkValid(id1, id2, id3, msg) {
+            var val1 = $(id1).val() ? parseInt($(id1).val()) : undefined;
+            var val2 = $(id2).val() ? parseInt($(id2).val()) : undefined;
+            var val3 = $(id3).val() ? parseInt($(id3).val()) : undefined;
+
+            if (val1 !== undefined && val2 !== undefined && val3 !== undefined) {
+                if (val1 + val2 !== val3) {
+                    $(id3).css('background-color', colorError);
+                    $(id3).attr('title', msg);
+                    return false;
+                }
+                else return true;
+            }
+            return false;
+        }
+
+        function validateNumbers() {
+
+            var validFlag = true;
+
+            // Check negative values
+            $.each(ids, function(index, id) {
+                var value = $(id).val() ? parseInt($(id).val()) : undefined;
+                if (value !== undefined && value < 0) {
+                    $(id).css('background-color', 'red');
+                    var originalTitle = origMessages[$(id).attr('id')];
+                    $(id).attr('title', originalTitle + ' Value cannot be negative');
+                    validFlag = false;
+                }
+            });
+
+            // E+ = A + B
+            if (!checkValid(ids[0], ids[1], ids[2],
+                origMessages["totalExposed"] + ' E+,O+ and E+,O- must add to E+, but your numbers do not add up.'))
+                validFlag = false;
+
+            // E- = C + D
+            if (!checkValid(ids[3], ids[4], ids[5],
+                origMessages["totalNotExposed"] + ' E-,O+ and E-,O- must add to E-, but your numbers do not add up.'))
+                validFlag = false;
+
+            // O+ = A + C
+            if (!checkValid(ids[0], ids[3], ids[6],
+                origMessages["totalDisease"] + ' E+,O+ and E-,O+ must add to O+, but your numbers do not add up.'))
+                validFlag = false;
+
+            // O- = B + D
+            if (!checkValid(ids[1], ids[4], ids[7],
+                origMessages["totalNoDisease"] + ' E+,O- and E-,O- must add to O-, but your numbers do not add up.'))
+                validFlag = false;
+
+            // N = E+ + E-
+            if (!checkValid(ids[2], ids[5], ids[8],
+                origMessages["totalSum"] + ' E+ and E- must add to N, but your numbers do not add up.'))
+                validFlag = false;
+
+            // N = O+ + O-
+            if (!checkValid(ids[6], ids[7], ids[8],
+                origMessages["totalSum"] + ' O+ and O- must add to N, but your numbers do not add up.'))
+                validFlag = false;
+
+            if (!validFlag) {
+                displayRatiosError();
+            } else {
+                clearRatiosError();
+            }
+
+            return validFlag;
+        }
+
+        function computeRatios() {
+            // Parse the values from the textboxes
+            var exposedDisease = $('#exposedDisease').val() ? parseInt($('#exposedDisease').val()) : 0;
+            var totalExposed = $('#totalExposed').val() ? parseInt($('#totalExposed').val()) : 0;
+            var notExposedDisease = $('#notExposedDisease').val() ? parseInt($('#notExposedDisease').val()) : 0;
+            var totalNotExposed = $('#totalNotExposed').val() ? parseInt($('#totalNotExposed').val()) : 0;
+            var exposure = $('#exposure').val();
+            var disease = $('#disease').val();
+
+            // Calculate the Risk Ratio
+            var riskExposed = totalExposed !== 0 ? exposedDisease / totalExposed : 0;
+            var riskNotExposed = totalNotExposed !== 0 ? notExposedDisease / totalNotExposed : 0;
+            var riskRatio = riskNotExposed !== 0 ? riskExposed / riskNotExposed : 0;
+
+            // Format the Risk Ratio to 2 decimal places, showing only necessary decimal places
+            var formattedRiskRatio = riskRatio.toFixed(2).replace(/\.?0+$/, '');
+
+            // Display the message
+            var message = `Those exposed to ${exposure} have ${formattedRiskRatio}x the risk when compared to those not exposed to ${exposure} for developing ${disease}.`;
+            $('#riskRatioDisplay').text(message);
+
+            // Set up the tooltip
+            var tooltipText = `Calculated as: 
+            <span class="fraction"><span class="numerator">E+,O+/E+</span> <span class="denominator">E-,O+/E-</span></span> = 
+            <span class="fraction"><span class="numerator">${exposedDisease}/${totalExposed}</span> 
+            <span class="denominator">${notExposedDisease}/${totalNotExposed}</span></span> = ${formattedRiskRatio}`;
+            $('#riskRatioDisplay').append(`<span class="tooltiptext">${tooltipText}</span>`);
+
+            // Calculate the additional risk message
+            var additionalRisk;
+            if (riskRatio > 1) {
+                additionalRisk = `Can also be said as: Those exposed to ${exposure} have ${(riskRatio - 1).toFixed(2) * 100}% higher risk than those not exposed to ${exposure} for developing ${disease}.`;
+            } else if (riskRatio === 1) {
+                additionalRisk = `Can also be said as: Exposure to ${exposure} has no association with developing ${disease}.`;
+            } else {
+                additionalRisk = `Can also be said as: Those exposed to ${exposure} have ${(1 - riskRatio).toFixed(2) * 100}% lower risk than those not exposed to ${exposure} for developing ${disease}.`;
+            }
+
+            // Append the additional message on a new line
+            $('#riskRatioDisplay').append(`<br/>${additionalRisk}`);
+
+            // Display the section
+            $('#ratiosSection').show();
+        }
+
+        $(document).ready(function () {
         });
 
-function updateTable() {
-    var A = $('#exposedDisease').val() ? parseInt($('#exposedDisease').val()) : undefined;
-    var B = $('#exposedNoDisease').val() ? parseInt($('#exposedNoDisease').val()) : undefined;
-    var C = $('#notExposedDisease').val() ? parseInt($('#notExposedDisease').val()) : undefined;
-    var D = $('#notExposedNoDisease').val() ? parseInt($('#notExposedNoDisease').val()) : undefined;
-    var total = $('#total').val() ? parseInt($('#total').val()) : undefined;
-    var totalDisease = $('#totalDisease').val() ? parseInt($('#totalDisease').val()) : undefined;
-    var totalNoDisease = $('#totalNoDisease').val() ? parseInt($('#totalNoDisease').val()) : undefined;
-    var totalExposed = $('#totalExposed').val() ? parseInt($('#totalExposed').val()) : undefined;
-    var totalNotExposed = $('#totalNotExposed').val() ? parseInt($('#totalNotExposed').val()) : undefined;
+        $('#enterData').click(function () {
+            var disease = $('#disease').val() || $('#disease').val('Outcome O').val();
+            var exposure = $('#exposure').val() || $('#exposure').val('Exposure E').val();
 
-    // Calculate missing values
-    if (total === undefined && (A + B + C + D)) total = A + B + C + D;
-    if (total === undefined && (totalDisease + totalNoDisease)) total = totalDisease + totalNoDisease;
-    if (total === undefined && (totalExposed + totalNotExposed)) total = totalExposed + totalNotExposed;
+            origMessages["exposedDisease"] = 'Of the people exposed to ' + $('#exposure').val() + ' in your study, how many developed ' + $('#disease').val() + '?';
+            origMessages["exposedNoDisease"] = 'Of the people exposed to ' + $('#exposure').val() + ' in your study, how many did not develop ' + $('#disease').val() + '?';
+            origMessages["totalExposed"] = 'What is the total number of people exposed to ' + $('#exposure').val() + ' in your study?';
 
+            origMessages["notExposedDisease"] = 'Of the people not exposed to ' + $('#exposure').val() + ' in your study, how many developed ' + $('#disease').val() + '?';
+            origMessages["notExposedNoDisease"] = 'Of the people not exposed to ' + $('#exposure').val() + ' in your study, how many did not develop ' + $('#disease').val() + '?';
+            origMessages["totalNotExposed"] = 'What is the total number of people not exposed to ' + $('#exposure').val() + ' in your study?';
 
-    if (totalDisease === undefined && (A + C)) totalDisease = A + C;
-    if (totalDisease === undefined && (total - totalNoDisease)) totalDisease = total - totalNoDisease;
-    if (totalNoDisease === undefined && (B + D)) totalNoDisease = B + D;
-    if (totalNoDisease === undefined && (total - totalDisease)) totalNoDisease = total - totalDisease;
+            origMessages["totalDisease"] = 'What is the total number of people who developed ' + $('#disease').val() + ' in your study?';
+            origMessages["totalNoDisease"] = 'What is the total number of people who did not develop ' + $('#disease').val() + ' in your study?';
+            origMessages["totalSum"] = 'What is the total number of people in your study?';
 
-    if (totalExposed === undefined && (A + B)) totalExposed = A + B;
-    if (totalExposed === undefined && (total - totalNotExposed)) totalExposed = total - totalNotExposed;
-    if (totalNotExposed === undefined && (C + D)) totalNotExposed = C + D;
-    if (totalNotExposed === undefined && (total - totalExposed)) totalNotExposed = total - totalExposed;
+            $('#exposedDisease').attr('title',origMessages["exposedDisease"]);
+            $('#exposedNoDisease').attr('title',origMessages["exposedNoDisease"]);
+            $('#totalExposed').attr('title',origMessages["totalExposed"]);
 
-    if (A === undefined && (totalExposed - B)!== undefined) A = totalExposed - B;
-    if (A === undefined && (totalDisease - C)!== undefined) A = totalDisease - C;
-    if (B === undefined && (totalExposed - B) !== undefined) B = totalExposed - A;
-    if (B === undefined && (totalNoDisease - D)!== undefined) B = totalNoDisease - D;
+            $('#notExposedDisease').attr('title',origMessages["notExposedDisease"]);
+            $('#notExposedNoDisease').attr('title',origMessages["notExposedNoDisease"]);
+            $('#totalNotExposed').attr('title',origMessages["totalNotExposed"]);
 
-    if (C === undefined && (totalDisease - A)!== undefined) C = totalDisease - A;
-    if (C === undefined && (totalNotExposed - D)!== undefined) C = totalNotExposed - D;
-    if (D === undefined && (totalNoDisease - B) !== undefined) D = totalNoDisease - B;
-    if (D === undefined && (totalNotExposed - C)!== undefined) D = totalNotExposed - C;
+            $('#totalDisease').attr('title',origMessages["totalDisease"]);
+            $('#totalNoDisease').attr('title',origMessages["totalNoDisease"]);
+            $('#totalSum').attr('title',origMessages["totalSum"]);
 
-    $('#A').text(A !== undefined ? A : 'N/A');
-    $('#B').text(B !== undefined ? B : 'N/A');
-    $('#C').text(C !== undefined ? C : 'N/A');
-    $('#D').text(D !== undefined ? D : 'N/A');
-    $('#AB').text(totalExposed !== undefined ? totalExposed : 'N/A');
-    $('#AC').text(totalDisease !== undefined ? totalDisease : 'N/A');
-    $('#BD').text(totalNoDisease !== undefined ? totalNoDisease : 'N/A');
-    $('#CD').text(totalNotExposed !== undefined ? totalNotExposed : 'N/A');
-    $('#N').text(total !== undefined ? total : 'N/A');
+            $('.table-section').show();
+            displayRatiosError();
+        });
 
-    $('#exposedDisease').val(A !== undefined ? A : 'N/A');
-    $('#exposedNoDisease').val(B !== undefined ? B : 'N/A');
-    $('#notExposedDisease').val(C !== undefined ? C : 'N/A');
-    $('#notExposedNoDisease').val(D !== undefined ? D : 'N/A');
+        $('#computeMissing').click(function() {
+            computeMissing();
+        });
 
-    $('#total').val(total !== undefined ? total : '');
-    $('#totalDisease').val(totalDisease !== undefined ? totalDisease : '');
-    $('#totalNoDisease').val(totalNoDisease !== undefined ? totalNoDisease : '');
-    $('#totalExposed').val(totalExposed !== undefined ? totalExposed : '');
-    $('#totalNotExposed').val(totalNotExposed !== undefined ? totalNotExposed : '');
-}
+        $('#clearButton').click(function() {
+            // Clear values and reset background color for each textbox
+            $(ids).each(function(index, id) {
+                $(id).val('').css('background-color', '');
+                $(id).attr('title',origMessages[$(id).attr('id')]);
+            });
+            $('#riskRatioDisplay').text('[Risk Ratio]');    // also clear the ratios text. set to placeholder.
+        });
 
+        $('#validateButton').click(function() {
+            computeMissing();
+            validateNumbers();
+        });
 
+        $('#computeRatiosButton').click(function() {
+            computeMissing();
+            if (!validateNumbers()) {
+                displayRatiosError();
+            } else {
+                clearRatiosError();
+                computeRatios();
+            }
+    });
 
-function updateTable1() {
-    var A = parseInt($('#exposedDisease').val()) || 0;
-    var B = parseInt($('#exposedNoDisease').val()) || 0;
-    var C = parseInt($('#notExposedDisease').val()) || 0;
-    var D = parseInt($('#notExposedNoDisease').val()) || 0;
-    var total = parseInt($('#total').val()) || 0;
-    var totalDisease = parseInt($('#totalDisease').val()) || 0;
-    var totalNoDisease = parseInt($('#totalNoDisease').val()) || 0;
-    var totalExposed = parseInt($('#totalExposed').val()) || 0;
-    var totalNotExposed = parseInt($('#totalNotExposed').val()) || 0;
-
-    // Calculate missing values
-    if (!total && (A + B + C + D)) total = A + B + C + D;
-    if (!total && (totalDisease + totalNoDisease)) total = totalDisease + totalNoDisease;
-    if (!total && (totalExposed + totalNotExposed)) total = totalExposed + totalNotExposed;	
-    if (!totalDisease && (A + C)) totalDisease = A + C;
-    if (!totalNoDisease && (B + D)) totalNoDisease = B + D;
-    if (!totalExposed && (A + B)) totalExposed = A + B;
-    if (!totalNotExposed && (C + D)) totalNotExposed = C + D;
-
-    if (!A && totalExposed) A = totalExposed - B;
-    if (!B && totalExposed) B = totalExposed - A;
-    if (!C && totalNotExposed) C = totalNotExposed - D;
-    if (!D && totalNotExposed) D = totalNotExposed - C;
-	
-	total = A + B + C + D;
-
-    $('#A').text(A);
-    $('#B').text(B);
-    $('#C').text(C);
-    $('#D').text(D);
-    $('#AB').text(A + B);
-    $('#AC').text(A + C);
-    $('#BD').text(B + D);
-    $('#CD').text(C + D);
-    $('#N').text(total);
-
-    $('#total').val(total);
-    $('#totalDisease').val(totalDisease);
-    $('#totalNoDisease').val(totalNoDisease);
-    $('#totalExposed').val(totalExposed);
-    $('#totalNotExposed').val(totalNotExposed);
-}
-
-function calculateRatios() {
-    var A = parseInt($('#exposedDisease').val()) || 0;
-    var B = parseInt($('#exposedNoDisease').val()) || 0;
-    var C = parseInt($('#notExposedDisease').val()) || 0;
-    var D = parseInt($('#notExposedNoDisease').val()) || 0;
-
-    var riskExposed = A / (A + B);
-    var riskUnexposed = C / (C + D);
-    var riskRatio = riskExposed / riskUnexposed;
-
-    var oddsExposed = A / (A + C);
-    var oddsUnexposed = B / (B + D);
-    var oddsRatio = oddsExposed / oddsUnexposed;
-
-    $('#riskRatioValue').text(`Risk Ratio = ${riskRatio.toFixed(2)}`);
-    $('#oddsRatio').text(`Odds Ratio = ${oddsRatio.toFixed(2)}`);
-
-    var riskRatioMessage = 'We can express the Relative Risk as: ';
-    if (riskRatio === 1) {
-        riskRatioMessage = `Exposure to ${$('#exposure').val()} had no association with ${$('#disease').val()}.`;
-    } else if (riskRatio > 1) {
-        riskRatioMessage = `${((riskRatio - 1) * 100).toFixed(2)}% higher risk for ${$('#disease').val()} in those exposed to ${$('#exposure').val()}.`;
-    } else {
-        riskRatioMessage = `${((1 - riskRatio) * 100).toFixed(2)}% lower risk for ${$('#disease').val()} in those exposed to ${$('#exposure').val()}.`;
-    }
-
-    $('#riskRatioMessage').text(riskRatioMessage);
-
-    var oddsRatioMessage = 'We can express the Relative Odds as: ';
-    if (oddsRatio === 1) {
-        oddsRatioMessage = `Odds of being exposed to ${$('#exposure').val()} was the same among those who developed ${$('#disease').val()} and those who did not develop ${$('#disease').val()}.`;
-    } else if (oddsRatio > 1) {
-        oddsRatioMessage = `${((oddsRatio - 1) * 100).toFixed(2)}% higher odds of being exposed to ${$('#exposure').val()} for those who developed ${$('#disease').val()}.`;
-    } else {
-        oddsRatioMessage = `${((1 - oddsRatio) * 100).toFixed(2)}% lower odds of being exposed to ${$('#exposure').val()} for those who developed ${$('#disease').val()}.`;
-    }
-
-    $('#oddsRatioMessage').text(oddsRatioMessage);
-
-
-}
-
-		
-		$('#disease, #exposure').on('input', function() {
-    var disease = $('#disease').val();
-    var exposure = $('#exposure').val();
-
-    $('span[id^="diseaseName"]').text(disease);
-    $('span[id^="exposureName"]').text(exposure);
-});
-
-$('input[type="number"]').on('blur', function() {
-    updateTable();
-    calculateRatios();
-});
-});
-
-</script>
-
-
+    </script>
 </body>
+
 </html>
