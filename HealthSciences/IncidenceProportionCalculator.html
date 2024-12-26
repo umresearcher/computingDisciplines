@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Incidence Proportion (Cumulative Incidence)</title>
+    <link rel="stylesheet" href="epiStyles.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
         .container {
             display: flex;
         }
@@ -21,58 +18,16 @@
         .pane:last-child {
             margin-right: 0;
         }
-        .highlight {
-            background-color: yellow;
-        }
         .result {
             margin-top: 20px;
-            font-weight: bold;
-        }
-        .fraction {
-            display: inline-block;
-            text-align: center;
-            vertical-align: middle;
-        }
-        .fraction > span {
-            display: block;
-        }
-        .fraction .numerator {
-            border-bottom: 1px solid #000;
-        }
-        .fraction .denominator {
-            margin-top: -5px;
-        }
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            cursor: pointer;
-        }
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 200px;
-            background-color: #555;
-            color: #fff;
-            text-align: center;
-            border-radius: 5px;
-            padding: 5px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%; /* Position the tooltip above the text */
-            left: 50%;
-            margin-left: -100px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
+            /* font-weight: bold; */
         }
     </style>
 </head>
 <body>
     <h1>Incidence Proportion (Cumulative Incidence)</h1>
     <p class="highlight"><b>Definition</b>: Proportion of population becoming new cases, occurring within a <u><b>defined population at risk</b></u> within a <u><b>specified time interval</b></u>.</p>
-    <p><b>Cumulative Incidence (Incidence Proportion) =</b> <span class="fraction"><span class="numerator">No. new disease cases during a specified time</span><span class="denominator">No. at risk at beginning of time interval</span></span> * Multiplier</p>
+    <p><b>Incidence Proportion (Cumulative Incidence) =</b> <span class="fraction"><span class="numerator">No. new disease cases during a specified time</span><span class="denominator">No. at risk at beginning of time interval</span></span> * Multiplier</p>
     
     <div class="container">
         <div class="pane">
@@ -110,13 +65,26 @@
                 var multiplier = parseFloat($('#multiplier').val());
                 var timeInterval = $('#timeInterval').val();
 
+                var diseaseMsg = `<span class="tooltip">${disease}<span class="tooltiptext" style="width: 250px;">this is the disease you specified</span></span>`;
+                var timeIntervalMsg = `<span class="tooltip">${timeInterval}<span class="tooltiptext" style="width: 275px;">this is the time interval you specified</span></span>`;
+                var multiplierMsg = `<span class="tooltip" >${multiplier}<span class="tooltiptext" style="width: 250px;">this is the multiplier you specified</span></span>`;
+
                 if (isNaN(atRisk) || isNaN(newCases) || isNaN(multiplier) || atRisk <= 0) {
                     $('#result').text('Please enter valid numbers for at risk, new cases, and multiplier.');
                     return;
                 }
 
                 var incidenceProportion = (newCases / atRisk) * multiplier;
-                $('#result').html(`Incidence proportion = <span class="fraction"><span class="numerator">${newCases}</span><span class="denominator">${atRisk}</span></span> * ${multiplier} = <span class="tooltip">${incidenceProportion.toFixed(2)}<span class="tooltiptext">calculated as: new disease cases / at risk * multiplier</span></span> incident cases of "<span class="tooltip">${disease}<span class="tooltiptext">the disease that you specified</span></span>" per "<span class="tooltip">${multiplier}<span class="tooltiptext">the multiplier that you specified</span></span>" at risk over a period of "<span class="tooltip">${timeInterval}<span class="tooltiptext">the time interval that you specified</span></span>".`);
+                var incidenceProportionDisplay = incidenceProportion.toFixed(2).replace(/\.?0+$/, '');
+
+                var msg = `Incidence proportion = `;
+                // msg += `<span class="fraction"><span class="numerator">${newCases}</span><span class="denominator">${atRisk}</span></span> * ${multiplier} = `;
+                msg += `<span class="tooltip">${incidenceProportionDisplay}<span class="tooltiptext" style="width: 400px;">calculated as:<br>`;
+                msg += `<span class="fraction"><span class="numerator">No. new disease cases (${newCases})</span>`;
+                msg += `<span class="denominator">No. at risk (${atRisk})</span></span> * multiplier (${multiplier})</span></span> `;
+                msg += `incident cases of ${diseaseMsg} per ${multiplierMsg} at risk over a period of ${timeIntervalMsg}.`;
+
+                $('#result').html(msg);
             });
         });
     </script>

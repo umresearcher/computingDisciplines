@@ -5,12 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Study Data Entry</title>
+    <link rel="stylesheet" href="epiStyles.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-
         .container {
             max-width: 600px;
             margin: auto;
@@ -67,7 +63,7 @@
             box-sizing: border-box;
         }
 
-        #ratiosSection {
+        #ratiosSection, #attrRiskResult, #PARResult {
             margin-top: 20px;
             padding: 10px;
             border: 1px solid #ccc;
@@ -99,30 +95,6 @@
             color: #ffffff; /* Ensure text remains white on hover */
         }
 
-        /* Tooltip container */
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            cursor: pointer;
-        }
-
-        /* Tooltip text */
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 220px;
-            background-color: #777;
-            color: #fff;
-            text-align: center;
-            border-radius: 5px;
-            padding: 5px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%; /* Position above the text */
-            left: 50%;
-            margin-left: -110px; /* Center the tooltip */
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
 
         /* Tooltip arrow */
         .tooltip .tooltiptext::after {
@@ -136,24 +108,9 @@
             border-color: #555 transparent transparent transparent;
         }
 
-        /* Show the tooltip text when hovering */
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-        .fraction {
-            display: inline-block;
-            text-align: center;
-            vertical-align: middle;
-        }
-        .fraction > span {
-            display: block;
-        }
-        .fraction .numerator {
-            border-bottom: 2px solid #000;
-        }
         .fraction .denominator {
-            margin-top: -5px;
+            /* margin-top: -5px; */
+            margin-top: 0px; 
         }
 
     </style>
@@ -161,7 +118,8 @@
 
 <body>
     <div class="container">
-        <h1>Study Data Entry</h1>
+        <h1>Risk and Odds Ratio</h1>
+        <h2>Study Data Entry</h2>
         <div class="input-section">
             <label for="disease">What outcome are you studying?</label>
             <input type="text" id="disease" placeholder="Enter outcome">
@@ -219,10 +177,41 @@
 
         </div>
         <div id="ratiosSection" style="display: none;">
-            <h3>Results</h3>
-            <p>Risk Ratio: <span id="riskRatioDisplay" class="tooltip">[Risk Ratio]</span></p>
-            <p>Odds Ratio: <span id="oddsRatioPlaceholder" class="tooltip">[Odds Ratio]</span></p>
+            <h3>Risk and Odds Ratio:</h3>
+            <p>Risk Ratio: <span id="riskRatioDisplay">[Risk Ratio]</span></p>
+            <p>Odds Ratio: <span id="oddsRatioDisplay" class="tooltip">[Odds Ratio]</span></p>
         </div>
+
+        <div id="otherRisksSection" style="display: none;">
+            <h3>Attributable Risk</h3>
+            <p class="highlight"><b>Definition</b>: <span id="attrRiskDefn"></span></p>
+        </div>
+
+        <div id="PARSection" style="display: none;">
+            <h3>Population Attributable Risk</h3>
+            <p class="highlight"><b>Definition</b>: <span id="PARDefn"></span></p>
+        </div>
+
+        <div id="attrRiskInput" style="display: none;">
+            <label for="multiplier">Calculating attributable risk requires a suitable multiplier. What is a suitable multiplier you want to use?</label><br>
+            <input type="number" id="multiplier" value="100"><br><br>
+            <button id="computeAttrRiskButton">Compute Attributable Risk and Population Attributable Risk</button>
+        </div>
+
+        <div id="attrRiskResult" style="display: none;">
+            <h3>Attributable Risk</h3>
+            <p><span id="attrRiskDisplay"></span></p>
+        </div>
+
+        <!-- <div id="PARInput" style="display: none;">
+            <button id="computePAR">Compute Population Attributable Risk</button>
+        </div> -->
+
+        <div id="PARResult" style="display: none;">
+            <h3>Population Attributable Risk</h3>
+            <p><span id="PARDisplay"></span></p>
+        </div>
+
 
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -246,6 +235,13 @@
         var colorComputed = 'rgb(212, 237, 218)'; 
         var colorMissing = 'rgb(248, 215, 218)';
 
+        var tooltipTextOutcome = "this is the outcome you specified";
+        var tooltipTextExposure = "this is the exposure you specified";
+        var tooltipTextMultiplier = "this is the multiplier you specified";
+
+        var riskRatio = 0;
+        var formattedRiskRatio = 0;
+
         function displayRatiosError() {
             var message = 'Make sure there are no missing numbers in the table and the numbers add up before ratios can be computed.';
             $('#computeRatiosButton').attr('title', message);
@@ -256,7 +252,6 @@
         }
 
         function updateTextBox(el, newVal, msg) {
-            // var newTitle = el.attr('title') + ' ' + msg;
             el.removeAttr('title');
             el.attr('title',msg);
             el.val(newVal).css('background-color', colorComputed);
@@ -504,43 +499,118 @@
             var totalExposed = $('#totalExposed').val() ? parseInt($('#totalExposed').val()) : 0;
             var notExposedDisease = $('#notExposedDisease').val() ? parseInt($('#notExposedDisease').val()) : 0;
             var totalNotExposed = $('#totalNotExposed').val() ? parseInt($('#totalNotExposed').val()) : 0;
+            var exposedNoDisease = $('#exposedNoDisease').val() ? parseInt($('#exposedNoDisease').val()) : 0;
+            var notExposedNoDisease = $('#notExposedNoDisease').val() ? parseInt($('#notExposedNoDisease').val()) : 0;
             var exposure = $('#exposure').val();
             var disease = $('#disease').val();
+
+            var exposureMsg = `<span class="tooltip">${exposure}<span class="tooltiptext" style="width: 250px;">${tooltipTextExposure}</span></span>`;
+            var outcomeMsg = `<span class="tooltip">${disease}<span class="tooltiptext" style="width: 250px;">${tooltipTextOutcome}</span></span>`;
 
             // Calculate the Risk Ratio
             var riskExposed = totalExposed !== 0 ? exposedDisease / totalExposed : 0;
             var riskNotExposed = totalNotExposed !== 0 ? notExposedDisease / totalNotExposed : 0;
-            var riskRatio = riskNotExposed !== 0 ? riskExposed / riskNotExposed : 0;
+            riskRatio = riskNotExposed !== 0 ? riskExposed / riskNotExposed : 0;
 
             // Format the Risk Ratio to 2 decimal places, showing only necessary decimal places
-            var formattedRiskRatio = riskRatio.toFixed(2).replace(/\.?0+$/, '');
-
-            // Display the message
-            var message = `Those exposed to ${exposure} have ${formattedRiskRatio}x the risk when compared to those not exposed to ${exposure} for developing ${disease}.`;
-            $('#riskRatioDisplay').text(message);
+            formattedRiskRatio = riskRatio.toFixed(2).replace(/\.?0+$/, '');
 
             // Set up the tooltip
-            var tooltipText = `Calculated as: 
+            var tooltipText = `Calculated as: <br>
             <span class="fraction"><span class="numerator">E+,O+/E+</span> <span class="denominator">E-,O+/E-</span></span> = 
             <span class="fraction"><span class="numerator">${exposedDisease}/${totalExposed}</span> 
             <span class="denominator">${notExposedDisease}/${totalNotExposed}</span></span> = ${formattedRiskRatio}`;
-            $('#riskRatioDisplay').append(`<span class="tooltiptext">${tooltipText}</span>`);
+            $('#riskRatioDisplay').text("");
+
+            // Display the message
+            var message = `Those exposed to ${exposureMsg} have `;
+            message += `<span class="tooltip">${formattedRiskRatio}<span class="tooltiptext" style="width: 300px;">${tooltipText}</span></span>`;
+            message += `x the risk when compared to those not exposed to ${exposureMsg} for developing ${outcomeMsg}`;
+            // $('#riskRatioDisplay').text(message);
+
+            if (riskRatio != 1) {   // Display only if ratio is not 1
+                $('#riskRatioDisplay').html(message);
+            }
 
             // Calculate the additional risk message
             var additionalRisk;
+            var addlRiskMsg = "";          
             if (riskRatio > 1) {
-                additionalRisk = `Can also be said as: Those exposed to ${exposure} have ${(riskRatio - 1).toFixed(2) * 100}% higher risk than those not exposed to ${exposure} for developing ${disease}.`;
+                var addlRisk = Math.round((formattedRiskRatio - 1) * 100);
+                tooltipText = `Calculated as:<br>(Risk Ratio - 1) * 100 = (${formattedRiskRatio} - 1) * 100 = ${addlRisk}`;
+                addlRiskMsg = `Can also be said as: Those exposed to ${exposureMsg} have `;
+                addlRiskMsg += `<span class="tooltip">${addlRisk}<span class="tooltiptext" style="width: 325px;">${tooltipText}</span></span>`;
+                addlRiskMsg += `% higher risk than those not exposed to ${exposureMsg} for developing ${outcomeMsg}.`;
             } else if (riskRatio === 1) {
-                additionalRisk = `Can also be said as: Exposure to ${exposure} has no association with developing ${disease}.`;
+                addlRiskMsg = `Exposure to ${exposureMsg} has no association with developing ${outcomeMsg}.`;
             } else {
-                additionalRisk = `Can also be said as: Those exposed to ${exposure} have ${(1 - riskRatio).toFixed(2) * 100}% lower risk than those not exposed to ${exposure} for developing ${disease}.`;
+                var addlRisk = (1 - formattedRiskRatio) * 100;
+                tooltipText = `Calculated as:<br>(1 - Risk Ratio) * 100 = (1 - ${formattedRiskRatio}) * 100 = ${addlRisk}`;
+                addlRiskMsg = `Can also be said as: Those exposed to ${exposureMsg} have `;
+                addlRiskMsg += `<span class="tooltip">${addlRisk}<span class="tooltiptext" style="width: 325px;">${tooltipText}</span></span>`;
+                addlRiskMsg += `% lower risk than those not exposed to ${exposureMsg} for developing ${outcomeMsg}.`;
             }
 
-            // Append the additional message on a new line
-            $('#riskRatioDisplay').append(`<br/>${additionalRisk}`);
+            // Append the additional message on a new line. Display for all ratios
+            $('#riskRatioDisplay').append(`<br/>${addlRiskMsg}`);
 
+            // Calculate the Odds Ratio
+            var oddsPositive = notExposedDisease !== 0 ? exposedDisease / notExposedDisease : 0;
+            var oddsNegative = notExposedNoDisease !== 0 ? exposedNoDisease / notExposedNoDisease : 0;
+            var oddsRatio = oddsNegative !== 0 ? oddsPositive / oddsNegative : 0;
+
+            // Format the Odds Ratio to 2 decimal places, showing only necessary decimal places
+            var formattedOddsRatio = oddsRatio.toFixed(2).replace(/\.?0+$/, '');
+
+            // Display the message
+            message = `The odds of being exposed to ${exposure} are ${formattedOddsRatio}-fold higher in those with ${disease} compared to those without ${disease}.`;
+            $('#oddsRatioDisplay').text(message);
+
+            // Set up the tooltip
+            tooltipText = `Calculated as:<br>
+            <span class="fraction"><span class="numerator">E+,O+/E-,O+</span> <span class="denominator">E+,O-/E-,O-</span></span> = 
+            <span class="fraction"><span class="numerator">${exposedDisease}/${notExposedDisease}</span> 
+            <span class="denominator">${exposedNoDisease}/${notExposedNoDisease}</span></span> = ${formattedOddsRatio}`;
+            $('#oddsRatioDisplay').text(message);
+            $('#oddsRatioDisplay').append(`<span class="tooltiptext" style="width: 300px;">${tooltipText}</span>`);
+            
             // Display the section
             $('#ratiosSection').show();
+
+            // Display attributable risk section if appropriate
+            var tooltipText1 = "this is the outcome you specified";
+            var tooltipText2 = "this is the exposure you specified";
+            message = `Attributable Risk is the number of cases of the outcome attributed to the exposure.<br><br>`;
+            message += `Attributable Risk is calculated as:<br>Incidence Proportion (Cumulative Incidence) of ${outcomeMsg} `;
+            message += `in those exposed to ${exposureMsg} &minus; `;
+            message += `Incidence Proportion (Cumulative Incidence) of ${outcomeMsg} in those not exposed to ${exposureMsg}`;
+            $('#attrRiskDefn').html(message);
+            // if (riskRatio > 1) $('#otherRisksSection').show();
+
+            /* prevExposure = totalExposed/totalNotExposed;
+            // Format the exposure prevalence to 2 decimal places, showing only necessary decimal places
+            var formattedprevExposure = prevExposure.toFixed(2).replace(/\.?0+$/, '');
+
+            tooltipText = `Calculated as: 
+            <span class="fraction"><span class="numerator">E+</span> <span class="denominator">E-</span></span> = 
+            <span class="fraction"><span class="numerator">${totalExposed}/${totalNotExposed}</span> = ${formattedprevExposure}`;
+
+            var prevExposureMsg = `<span class="tooltip">prevalence of exposure<span class="tooltiptext" style="width: 300px;">${tooltipText}</span></span>`;
+
+            message = `Population Attributable Risk (PAR) % is the percentage of disease cases attributed to the exposure within the overall population.<br>`;
+            message += `PAR takes into account both the ${prevExposureMsg} and its strength of association with ${outcomeMsg}`; */
+
+            message = `Population Attributable Risk (PAR) % is the percentage of cases with ${outcomeMsg} attributed to ${exposureMsg} within the overall population.<br>`;
+            message += `PAR takes into account both the prevalence of exposure and its strength of association with ${outcomeMsg}`;
+
+            $('#PARDefn').html(message);
+            // if (riskRatio > 1) $('#PARSection').show();
+            if (riskRatio > 1) {
+                $('#otherRisksSection').show();
+                $('#PARSection').show();
+                $('#attrRiskInput').show();
+                // $('#PARInput').show();
+            }
         }
 
         $(document).ready(function () {
@@ -550,17 +620,17 @@
             var disease = $('#disease').val() || $('#disease').val('Outcome O').val();
             var exposure = $('#exposure').val() || $('#exposure').val('Exposure E').val();
 
-            origMessages["exposedDisease"] = 'Of the people exposed to ' + $('#exposure').val() + ' in your study, how many developed ' + $('#disease').val() + '?';
-            origMessages["exposedNoDisease"] = 'Of the people exposed to ' + $('#exposure').val() + ' in your study, how many did not develop ' + $('#disease').val() + '?';
-            origMessages["totalExposed"] = 'What is the total number of people exposed to ' + $('#exposure').val() + ' in your study?';
+            origMessages["exposedDisease"] = 'A = E+, O+. Of the people exposed to ' + $('#exposure').val() + ' in your study, how many developed ' + $('#disease').val() + '?';
+            origMessages["exposedNoDisease"] = 'B = E+, O-. Of the people exposed to ' + $('#exposure').val() + ' in your study, how many did not develop ' + $('#disease').val() + '?';
+            origMessages["totalExposed"] = 'E+ = A + B. What is the total number of people exposed to ' + $('#exposure').val() + ' in your study?';
 
-            origMessages["notExposedDisease"] = 'Of the people not exposed to ' + $('#exposure').val() + ' in your study, how many developed ' + $('#disease').val() + '?';
-            origMessages["notExposedNoDisease"] = 'Of the people not exposed to ' + $('#exposure').val() + ' in your study, how many did not develop ' + $('#disease').val() + '?';
-            origMessages["totalNotExposed"] = 'What is the total number of people not exposed to ' + $('#exposure').val() + ' in your study?';
+            origMessages["notExposedDisease"] = 'C = E-, O+. Of the people not exposed to ' + $('#exposure').val() + ' in your study, how many developed ' + $('#disease').val() + '?';
+            origMessages["notExposedNoDisease"] = 'D = E-, O-. Of the people not exposed to ' + $('#exposure').val() + ' in your study, how many did not develop ' + $('#disease').val() + '?';
+            origMessages["totalNotExposed"] = 'E- = C + D. What is the total number of people not exposed to ' + $('#exposure').val() + ' in your study?';
 
-            origMessages["totalDisease"] = 'What is the total number of people who developed ' + $('#disease').val() + ' in your study?';
-            origMessages["totalNoDisease"] = 'What is the total number of people who did not develop ' + $('#disease').val() + ' in your study?';
-            origMessages["totalSum"] = 'What is the total number of people in your study?';
+            origMessages["totalDisease"] = 'O+ = A + C. What is the total number of people who developed ' + $('#disease').val() + ' in your study?';
+            origMessages["totalNoDisease"] = 'O- = B + D. What is the total number of people who did not develop ' + $('#disease').val() + ' in your study?';
+            origMessages["totalSum"] = 'N = ALL. What is the total number of people in your study?';
 
             $('#exposedDisease').attr('title',origMessages["exposedDisease"]);
             $('#exposedNoDisease').attr('title',origMessages["exposedNoDisease"]);
@@ -588,7 +658,15 @@
                 $(id).val('').css('background-color', '');
                 $(id).attr('title',origMessages[$(id).attr('id')]);
             });
-            $('#riskRatioDisplay').text('[Risk Ratio]');    // also clear the ratios text. set to placeholder.
+
+            $('#ratiosSection').hide();
+            // $('#otherRisksSection').hide();
+            // $('#attrRiskResult').hide();
+            $('#attrRiskInput').hide();
+            $('#attrRiskResult').hide();
+            // $('#PARInput').hide();
+            $('#PARResult').hide();
+
         });
 
         $('#validateButton').click(function() {
@@ -604,7 +682,87 @@
                 clearRatiosError();
                 computeRatios();
             }
-    });
+        });
+
+        $('#computeAttrRiskButton').click(function() {
+            // Parse the values from the textboxes
+            var exposedDisease = $('#exposedDisease').val() ? parseInt($('#exposedDisease').val()) : 0;
+            var totalExposed = $('#totalExposed').val() ? parseInt($('#totalExposed').val()) : 0;
+            var notExposedDisease = $('#notExposedDisease').val() ? parseInt($('#notExposedDisease').val()) : 0;
+            var totalNotExposed = $('#totalNotExposed').val() ? parseInt($('#totalNotExposed').val()) : 0;
+            var exposedNoDisease = $('#exposedNoDisease').val() ? parseInt($('#exposedNoDisease').val()) : 0;
+            var notExposedNoDisease = $('#notExposedNoDisease').val() ? parseInt($('#notExposedNoDisease').val()) : 0;
+            var totalSum = $('#totalSum').val() ? parseInt($('#totalSum').val()) : 0;
+
+            var exposure = $('#exposure').val();
+            var disease = $('#disease').val();
+            var multiplier = $('#multiplier').val() ? parseInt($('#multiplier').val()) : 0;
+
+            var incidenceExposed = exposedDisease/totalExposed * multiplier;
+            var incidenceNotExposed = notExposedDisease/totalNotExposed * multiplier;
+            var attrRisk = incidenceExposed - incidenceNotExposed;
+
+            // Format the Numbers to 2 decimal places, showing only necessary decimal places
+            var formattedincidenceExposed = incidenceExposed.toFixed(2).replace(/\.?0+$/, '');
+            var formattedincidenceNotExposed = incidenceNotExposed.toFixed(2).replace(/\.?0+$/, '');
+            var formattedattrRisk = formattedincidenceExposed - formattedincidenceNotExposed;
+
+            var attrRisk2 = formattedattrRisk/formattedincidenceExposed * 100;
+            var formattedattrRisk2 = attrRisk2.toFixed(2).replace(/\.?0+$/, '');
+
+            var exposureMsg = `<span class="tooltip">${exposure}<span class="tooltiptext" style="width: 250px;">${tooltipTextExposure}</span></span>`;
+            var outcomeMsg = `<span class="tooltip">${disease}<span class="tooltiptext" style="width: 250px;">${tooltipTextOutcome}</span></span>`;
+            var multiplierMsg = `<span class="tooltip">${multiplier}<span class="tooltiptext" style="width: 250px;">${tooltipTextMultiplier}</span></span>`;
+
+            var tooltipText4 = "calculated as:<br> Incidence Proportion in Exposed ";
+            tooltipText4 += `(<span class="fraction"><span class="numerator">${exposedDisease}</span><span class="denominator">${totalExposed}</span></span> `;
+            tooltipText4 += `&times; ${multiplier}) &minus; <br>`;
+            tooltipText4 += `Incidence Proportion in Not Exposed (<span class="fraction"><span class="numerator">${notExposedDisease}</span><span class="denominator">${totalNotExposed}</span></span> `;
+            tooltipText4 += `&times; ${multiplier})<br>`;
+            tooltipText4 += `= (${formattedincidenceExposed} &minus; ${formattedincidenceNotExposed}) = ${formattedattrRisk}`;
+
+            var tooltipText5 = `calculated as: <span class="fraction"><span class="numerator">(Incidence Proportion in Exposed &minus; Incidence Proportion in Not Exposed)</span><span class="denominator">Incidence Proportion in Exposed</span></span>`;
+            tooltipText5 += " &times; 100<br>";
+            tooltipText5 += `= <span class="fraction"><span class="numerator">(${formattedincidenceExposed} &minus; ${formattedincidenceNotExposed})</span><span class="denominator">${formattedincidenceExposed}</span></span>`;
+            tooltipText5 += ` &times; 100 = ${formattedattrRisk2}`;
+
+            message = `The excess risk of ${outcomeMsg} among those exposed to ${exposureMsg} attributable to ${exposureMsg} is `;
+            message += `<span class="tooltip">${formattedattrRisk}<span class="tooltiptext" style="width: 450px;">${tooltipText4}</span></span> `;
+            message += `per ${multiplierMsg} population.<br>`;
+            message += `Can also be said as: Among those exposed to ${exposureMsg}, `;
+            message += `<span class="tooltip">${formattedattrRisk2}<span class="tooltiptext" style="width: 600px;">${tooltipText5}</span></span>`;
+            message += `% of cases with ${outcomeMsg} is attributed to ${exposureMsg} and could be prevented if ${exposureMsg} was controlled.`;
+
+            $('#attrRiskDisplay').html(message);
+
+            var prevE = totalExposed/totalSum * 100;
+            var formattedPrevE = prevE.toFixed(2).replace(/\.?0+$/, '');
+
+            var tooltipText5 = `calculated as:<br>`;
+            tooltipText5 += `<span class="fraction"><span class="numerator">Number of people exposed to ${exposure} (${totalExposed})</span>`;
+            tooltipText5 += `<span class="denominator">Number of people in the study (${totalSum})</span></span>`;
+            tooltipText5 += `&times; multiplier (100)`;
+            message = `Prevalence of ${exposureMsg} = `;
+            message += `<span class="tooltip">${formattedPrevE}<span class="tooltiptext" style="width: 500px;">${tooltipText5}</span></span>%`;
+
+            var formattedPrevE1 = formattedPrevE/100;
+            var par = formattedPrevE1 * (riskRatio - 1)/(formattedPrevE1 * (riskRatio - 1) + 1) * 100;
+            var formattedPar = par.toFixed(2).replace(/\.?0+$/, '');
+
+            var tooltipText6 = `calculated as:<br>`;
+            tooltipText6 += `<span class="fraction"><span class="numerator">Prevalence of ${exposure} (${formattedPrevE1}) * [Risk Ratio (${formattedRiskRatio}) - 1]</span>`;
+            tooltipText6 += `<span class="denominator">Prevalence of ${exposure} (${formattedPrevE1}) * [Risk Ratio (${formattedRiskRatio}) - 1] + 1</span></span>`;
+
+            message += `<br><br>In the overall population, `;
+            message += `<span class="tooltip">${formattedPar}<span class="tooltiptext" style="width: 600px;">${tooltipText6}</span></span>% `;
+            message += `of cases with ${outcomeMsg} is attributed to ${exposureMsg} `;
+            message += `and could be prevented if ${exposureMsg} was controlled.`;
+            $('#PARDisplay').html(message);
+
+            $('#attrRiskResult').show();
+            $('#PARResult').show();
+        });
+
 
     </script>
 </body>

@@ -4,14 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prevalence Calculator</title>
+    <link rel="stylesheet" href="epiStyles.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .highlight {
-            background-color: yellow;
-        }
         .container {
             display: flex;
         }
@@ -24,41 +18,6 @@
         .pane:last-child {
             margin-right: 0;
         }
-        .tooltip {
-            position: relative;
-            display: inline-block;
-        }
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 300px;
-            background-color: #555;
-            color: #fff;
-            text-align: center;
-            border-radius: 5px;
-            padding: 5px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%; /* Position the tooltip above the text */
-            left: 50%;
-            margin-left: -150px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-        .fraction {
-            display: inline-block;
-            vertical-align: middle;
-            text-align: center;
-        }
-        .fraction > span {
-            display: block;
-        }
-        .fraction .numerator {
-            border-bottom: 1px solid #000;
-        }
     </style>
 </head>
 <body>
@@ -66,8 +25,8 @@
     <p class="highlight"><b>Definition</b>: Proportion of individuals within a specified population that have an <u><b>existing condition</b></u> (disease or other characteristic) at a <u><b>specified point in time</b></u>.</p>
     <p><b>Prevalence = </b> 
         <span class="fraction">
-            <span class="numerator"># cases at a specified time</span>
-            <span class="denominator"># in the population at that time</span>
+            <span class="numerator">No. cases at a specified time</span>
+            <span class="denominator">No. in the population at that time</span>
         </span> 
         * Multiplier
     </p>
@@ -108,12 +67,17 @@
                 return;
             }
 
+            var conditionMsg = `<span class="tooltip">${condition}<span class="tooltiptext" style="width: 300px;">this is the existing condition you specified</span></span>`;
+            var timeMsg = `<span class="tooltip">${time}<span class="tooltiptext" style="width: 300px;">this is the point in time you specified</span></span>`;
+            var multiplierMsg = `<span class="tooltip" >${multiplier}<span class="tooltiptext" style="width: 300px;">this is the multiplier you specified</span></span>`;
+
             var prevalence = (cases / population) * multiplier;
-            var prevalenceDisplay = Number.isInteger(prevalence) ? prevalence : prevalence.toFixed(2);
-            var resultText = `The prevalence of "<span class="tooltip">${condition}<span class="tooltiptext">this is the existing condition you specified</span></span>" at "<span class="tooltip">${time}<span class="tooltiptext">this is the point in time you specified</span></span>" is <span class="tooltip">${prevalenceDisplay}<span class="tooltiptext">this is calculated as <span class="fraction"><span class="numerator"># cases (${cases})</span><span class="denominator"># in the population (${population})</span></span> * multipler (${multiplier})</span></span> per "<span class="tooltip">${multiplier}<span class="tooltiptext">this is the multiplier you specified</span></span>" number of people.`;
+            var prevalenceDisplay = prevalence.toFixed(2).replace(/\.?0+$/, '');
+            var resultText = `The prevalence of ${conditionMsg} at ${timeMsg} is `;
+            resultText += `<span class="tooltip">${prevalenceDisplay}<span class="tooltiptext" style="width: 450px;">this is calculated as<br><span class="fraction"><span class="numerator">No. cases (${cases})</span><span class="denominator">No. in the population (${population})</span></span> * multipler (${multiplier})</span></span> per ${multiplierMsg} number of people.`;
 
             if (multiplier == 100) {
-                resultText += `<br><br>The prevalence of "<span class="tooltip">${condition}<span class="tooltiptext">this is the existing condition you specified</span></span>" at "<span class="tooltip">${time}<span class="tooltiptext">this is the point in time you specified</span></span>" can also be said to be ${prevalenceDisplay} percent of the population.`;
+                resultText += `<br><br>The prevalence of ${conditionMsg} at ${timeMsg} can also be said to be ${prevalenceDisplay} percent of the population.`;
             }
 
             $('#result').html(resultText);
