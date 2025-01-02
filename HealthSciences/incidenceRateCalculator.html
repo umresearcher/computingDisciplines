@@ -242,7 +242,7 @@
                 const row = $(this).closest('tr');
                 const initiation = parseInt(row.find('.initiation').val());
                 const end = parseInt(row.find('.end').val());
-                if (initiation && end && end >= initiation) {
+                if (initiation >= 0 && end && end >= initiation) {
                     row.find('.person-time').text(end - initiation);
                 } else {
                     row.find('.person-time').text('');
