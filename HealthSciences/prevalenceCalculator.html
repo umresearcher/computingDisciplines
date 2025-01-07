@@ -83,11 +83,11 @@
 
             var prevalence = (cases / population) * multiplier;
             var prevalenceDisplay = prevalence.toFixed(2).replace(/\.?0+$/, '');
-            var resultText = `The prevalence of ${conditionMsg} at ${timeMsg} is `;
+            var resultText = `The prevalence of ${conditionMsg} at/on/in ${timeMsg} is `;
             resultText += `<span class="tooltip">${prevalenceDisplay}<span class="tooltiptext" style="width: 450px;">this is calculated as<br><span class="fraction"><span class="numerator">No. cases (${cases})</span><span class="denominator">No. in the population (${population})</span></span> * multipler (${multiplier})</span></span> per ${multiplierMsg} people.`;
 
             if (multiplier == 100) {
-                resultText += `<br><br>It can also be said as: The prevalence of ${conditionMsg} at ${timeMsg} is ${prevalenceDisplay}% of the population.`;
+                resultText += `<br><br>It can also be said as: The prevalence of ${conditionMsg} at/on/in ${timeMsg} is ${prevalenceDisplay}% of the population.`;
             }
 
             $('#result').html(resultText);
