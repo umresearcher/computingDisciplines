@@ -27,26 +27,32 @@
 <body>
     <h1>Incidence Proportion (Cumulative Incidence)</h1>
     <p class="highlight"><b>Definition</b>: Proportion of population becoming new cases, occurring within a <u><b>defined population at risk</b></u> within a <u><b>specified time interval</b></u>.</p>
-    <p><b>Incidence Proportion (Cumulative Incidence) =</b> <span class="fraction"><span class="numerator">No. new disease cases during a specified time</span><span class="denominator">No. at risk at beginning of time interval</span></span> * Multiplier</p>
+    <p><b>Incidence Proportion (Cumulative Incidence) =</b> <span class="fraction"><span class="numerator">No. new cases during a specified time</span><span class="denominator">No. at risk at beginning of time interval</span></span> * Multiplier</p>
     
     <div class="container">
         <div class="pane">
             <h2>Input Data</h2>
-            <label for="disease">What disease are we studying?</label><br>
+            <label for="disease">What condition are we studying?</label><br>
             <input type="text" id="disease"><br><br>
             
             <label for="atRisk">How many at risk at beginning of time interval?</label><br>
-            <input type="number" id="atRisk"><br><br>
+            <input type="number" id="atRisk" min="1" step="1" title="Enter a whole number >= 1"><br><br>
             
-            <label for="timeInterval">What is the time interval?</label><br>
+            <label for="timeInterval">What is the specified time interval?</label><br>
             <input type="text" id="timeInterval"><br><br>
             
             <label for="newCases">How many new disease cases during the time interval?</label><br>
-            <input type="number" id="newCases"><br><br>
+            <input type="number" id="newCases" min="0" step="1" title="Enter a whole number between 0 and no. at risk"><br><br>
             
             <label for="multiplier">What is a suitable multiplier?</label><br>
-            <input type="number" id="multiplier"><br><br>
-            
+            <select id="multiplier">
+                <option value="100">100</option>
+                <option value="1000">1000</option>
+                <option value="10000">10K</option>
+                <option value="100000">100K</option>
+                <option value="1000000">1 Million</option>
+              </select><br><br>
+
             <button id="calculateBtn">Calculate</button>
         </div>
         <div class="pane">
@@ -66,11 +72,11 @@
                 var timeInterval = $('#timeInterval').val();
 
                 var diseaseMsg = `<span class="tooltip">${disease}<span class="tooltiptext" style="width: 250px;">this is the disease you specified</span></span>`;
-                var timeIntervalMsg = `<span class="tooltip">${timeInterval}<span class="tooltiptext" style="width: 275px;">this is the time interval you specified</span></span>`;
+                var timeIntervalMsg = `<span class="tooltip">${timeInterval}<span class="tooltiptext" style="width: 275px;">this is the specified time interval</span></span>`;
                 var multiplierMsg = `<span class="tooltip" >${multiplier}<span class="tooltiptext" style="width: 250px;">this is the multiplier you specified</span></span>`;
 
-                if (isNaN(atRisk) || isNaN(newCases) || isNaN(multiplier) || atRisk <= 0) {
-                    $('#result').text('Please enter valid numbers for at risk, new cases, and multiplier.');
+                if (isNaN(atRisk) || isNaN(newCases) || atRisk < 1 || !Number.isInteger(Number(atRisk)) || newCases < 0 || !Number.isInteger(Number(newCases)) || newCases > atRisk) {
+                    $('#result').text('Please enter valid numbers for no. at risk and for no. new cases.');
                     return;
                 }
 
@@ -80,9 +86,15 @@
                 var msg = `Incidence proportion = `;
                 // msg += `<span class="fraction"><span class="numerator">${newCases}</span><span class="denominator">${atRisk}</span></span> * ${multiplier} = `;
                 msg += `<span class="tooltip">${incidenceProportionDisplay}<span class="tooltiptext" style="width: 400px;">calculated as:<br>`;
-                msg += `<span class="fraction"><span class="numerator">No. new disease cases (${newCases})</span>`;
+                msg += `<span class="fraction"><span class="numerator">No. new cases (${newCases})</span>`;
                 msg += `<span class="denominator">No. at risk (${atRisk})</span></span> * multiplier (${multiplier})</span></span> `;
-                msg += `incident cases of ${diseaseMsg} per ${multiplierMsg} at risk over a period of ${timeIntervalMsg}.`;
+                msg += `incident cases of ${diseaseMsg} per ${multiplierMsg} at risk over a period of/from ${timeIntervalMsg}.`;
+
+                if (multiplier == 100) {
+                    msg += `<br><br>It can also be said as: Incidence proportion of ${diseaseMsg} =  ${incidenceProportionDisplay}% `;
+                    msg += `over a period of/from ${timeIntervalMsg}.`;
+                }
+
 
                 $('#result').html(msg);
             });

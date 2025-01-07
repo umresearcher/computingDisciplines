@@ -22,29 +22,39 @@
 </head>
 <body>
     <h1>Prevalence</h1>
-    <p class="highlight"><b>Definition</b>: Proportion of individuals within a specified population that have an <u><b>existing condition</b></u> (disease or other characteristic) at a <u><b>specified point in time</b></u>.</p>
+    <p class="highlight"><b>Definition</b>: Proportion of individuals within a specified population that have an <u><b>existing condition/characteristic</b></u> (disease or other characteristic) at a <u><b>specified point in time</b></u>.</p>
     <p><b>Prevalence = </b> 
         <span class="fraction">
             <span class="numerator">No. cases at a specified time</span>
             <span class="denominator">No. in the population at that time</span>
         </span> 
-        * Multiplier
+        &times; Multiplier
     </p>
-    <p>The multiplier is used to have numbers that are easier to understand by shifting the decimal point. If we use a multiplier of 100, it is also called percentage.</p>
+    <p>The multiplier is used to have numbers that are easier to understand by shifting the decimal point. If we use a multiplier of 100, it is also called percentage (%).</p>
     
     <div class="container">
         <div class="pane">
             <h2>Input Data</h2>
-            <label for="condition">What existing condition are you studying?</label><br>
+            <label for="condition">What existing condition/characteristic are you studying?</label><br>
             <input type="text" id="condition"><br><br>
             <label for="time">What is the point in time in your study?</label><br>
             <input type="text" id="time"><br><br>
+
             <label for="population">What is the population in your study at that time?</label><br>
-            <input type="number" id="population"><br><br>
-            <label for="cases">How many cases of the existing condition in your population at that time?</label><br>
-            <input type="number" id="cases"><br><br>
+            <input type="number" id="population" min="1" step="1" title="Enter a whole number >= 1"><br><br>
+
+            <label for="cases">How many cases of the existing condition/characteristic in your population at that time?</label><br>
+            <input type="number" id="cases" min="0" step="1" title="Enter a whole number between 0 and no. in the population"><br><br>
+
             <label for="multiplier">What is the multiplier you want to use?</label><br>
-            <input type="number" id="multiplier" value="100"><br><br>
+            <select id="multiplier">
+                <option value="100">100</option>
+                <option value="1000">1000</option>
+                <option value="10000">10K</option>
+                <option value="100000">100K</option>
+                <option value="1000000">1 Million</option>
+              </select><br><br>
+
             <button onclick="calculatePrevalence()">Calculate</button>
         </div>
         <div class="pane" id="resultPane">
@@ -58,26 +68,26 @@
         function calculatePrevalence() {
             var condition = $('#condition').val();
             var time = $('#time').val();
-            var population = $('#population').val();
-            var cases = $('#cases').val();
-            var multiplier = $('#multiplier').val();
+            var population = parseFloat($('#population').val());
+            var cases = parseFloat($('#cases').val());
+            var multiplier = parseFloat($('#multiplier').val());
 
-            if (population == 0) {
-                alert("Population cannot be zero.");
-                return;
+            if (isNaN(population) || isNaN(cases) || population < 1 || !Number.isInteger(Number(population)) || cases < 0 || !Number.isInteger(Number(cases)) || cases > population) {
+                    $('#result').text('Please enter valid numbers for no. in the population and for no. cases.');
+                    return;
             }
 
-            var conditionMsg = `<span class="tooltip">${condition}<span class="tooltiptext" style="width: 300px;">this is the existing condition you specified</span></span>`;
+            var conditionMsg = `<span class="tooltip">${condition}<span class="tooltiptext" style="width: 300px;">this is the existing condition/characteristic you specified</span></span>`;
             var timeMsg = `<span class="tooltip">${time}<span class="tooltiptext" style="width: 300px;">this is the point in time you specified</span></span>`;
             var multiplierMsg = `<span class="tooltip" >${multiplier}<span class="tooltiptext" style="width: 300px;">this is the multiplier you specified</span></span>`;
 
             var prevalence = (cases / population) * multiplier;
             var prevalenceDisplay = prevalence.toFixed(2).replace(/\.?0+$/, '');
             var resultText = `The prevalence of ${conditionMsg} at ${timeMsg} is `;
-            resultText += `<span class="tooltip">${prevalenceDisplay}<span class="tooltiptext" style="width: 450px;">this is calculated as<br><span class="fraction"><span class="numerator">No. cases (${cases})</span><span class="denominator">No. in the population (${population})</span></span> * multipler (${multiplier})</span></span> per ${multiplierMsg} number of people.`;
+            resultText += `<span class="tooltip">${prevalenceDisplay}<span class="tooltiptext" style="width: 450px;">this is calculated as<br><span class="fraction"><span class="numerator">No. cases (${cases})</span><span class="denominator">No. in the population (${population})</span></span> * multipler (${multiplier})</span></span> per ${multiplierMsg} people.`;
 
             if (multiplier == 100) {
-                resultText += `<br><br>The prevalence of ${conditionMsg} at ${timeMsg} can also be said to be ${prevalenceDisplay} percent of the population.`;
+                resultText += `<br><br>It can also be said as: The prevalence of ${conditionMsg} at ${timeMsg} is ${prevalenceDisplay}% of the population.`;
             }
 
             $('#result').html(resultText);
