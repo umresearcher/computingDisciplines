@@ -99,7 +99,8 @@
         </p>
         <div id="input-section">
             <label for="numSubjects">How many participants in your study?</label>
-            <input type="number" id="numSubjects" placeholder="Num of Participants" min="1" max="20" style="width: 150px;" required>
+            <input type="number" id="numSubjects" placeholder="Num of Participants" min="1" step="1" max="20" style="width: 150px;" 
+                title="Enter a whole number between 1 and 20." required>
 
             <label for="time-unit">Choose a unit of time:</label>
             <select id="time-unit" name="time-unit">
@@ -109,7 +110,8 @@
             </select>            
 
             <label for="duration">Enter duration of your study:</label>
-            <input type="number" id="duration" placeholder="Duration of Study" min="1" required><br><br>
+            <input type="number" id="duration" placeholder="Duration of Study" min="1" step="1"
+                title="How many days in your study? Enter it a whole number >= 1." required><br><br>
 
             <button id="enterParticipantData">Enter the data for each participant</button>
         </div>
@@ -140,9 +142,14 @@
                 </tfoot>
             </table>
             <br>
-            <label for="multiplier">A multiplier other than 1 may be used to get meaningful numbers for Incidence Rate (Incidence Density). What is the multiplier you want to use?</label><br>
-            <input type="number" id="multiplier" value="1">
-            <br><br>
+            <label for="multiplier">What is the multiplier you want to use? Choose a multiplier that will give meaningful numbers for Incidence Rate (Incidence Density).</label><br>
+            <select id="multiplier">
+                <option value="100">100</option>
+                <option value="1000">1000</option>
+                <option value="10000">10K</option>
+                <option value="100000">100K</option>
+                <option value="1000000">1 Million</option>
+              </select><br><br>
             <button id="calculateIncidenceRate">Calculate Incidence Rate (Incidence Density)</button>
 
             <p id="incidenceRate1"></p>
@@ -150,210 +157,247 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
     $(document).ready(function() {
+        $('#time-unit').change(function() {
+            var selectedUnit = $(this).val();
+            $('#duration').attr('title', `How many ${selectedUnit} in your study? Enter it a whole number >= 1.`);
+        });
         $('#enterParticipantData').click(function(event) {
+            $('#table-section').hide();
             event.preventDefault();
             let isValid = true;
     
             const numSubjects = $('#numSubjects');
-            const timeUnit = $('#time-unit');
+            const numSubjectsVal = parseFloat(numSubjects.val());
             const duration = $('#duration');
+            const durationVal = parseFloat(duration.val());
     
-            if (numSubjects.val() < 1 || numSubjects.val() > 20) {
-                numSubjects.addClass('invalid').attr('data-error', 'Number of participants must be between 1 and 20.');
+            if (numSubjectsVal < 1 || numSubjectsVal > 20 || !Number.isInteger(Number(numSubjectsVal))) {
+                numSubjects.addClass('invalid').attr('data-error', 'Number of participants must be a whole number between 1 and 20.');
                 isValid = false;
             } else {
                 numSubjects.removeClass('invalid').removeAttr('data-error');
             }
-    
-            if (!timeUnit.val()) {
-                timeUnit.addClass('invalid').attr('data-error', 'Please choose a unit of time.');
-                isValid = false;
-            } else {
-                timeUnit.removeClass('invalid').removeAttr('data-error');
-            }
-    
-            if (duration.val() < 1) {
-                duration.addClass('invalid').attr('data-error', 'Duration must be at least 1.');
+        
+            if (durationVal < 1 || !Number.isInteger(Number(durationVal))) {
+                duration.addClass('invalid').attr('data-error', 'Duration must be a whole number >= 1.');
                 isValid = false;
             } else {
                 duration.removeClass('invalid').removeAttr('data-error');
             }
     
             if (isValid) {
-            $('#table-section').show();
-            const units = timeUnit.find('option:selected').text();
-            const numParticipants = numSubjects.val();
-            const tableBody = $('#participant-table tbody');
-            tableBody.empty();
-            $('#total-person-time').text(`0`);
-            $('#num-disease-cases').text(`0`);
-            $('#incidenceRate1').text(``);
+                $('#table-section').show();
+                const timeUnit = $('#time-unit');
+                const units = timeUnit.find('option:selected').text();
+                const tableBody = $('#participant-table tbody');
+                tableBody.empty();
+                $('#total-person-time').text(`0`);
+                $('#num-disease-cases').text(`0`);
+                $('#incidenceRate1').text(``);
 
+                $('#person-time-header').text(`Person-${units}`);
+                $('#total-person-time-header').text(`Total Person-${units}`);
 
-            $('#person-time-header').text(`Person-${units}`);
-            $('#total-person-time-header').text(`Total Person-${units}`);
-
-            for (let i = 1; i <= numParticipants; i++) {
-                const row = `
-                    <tr style="text-align: center;vertical-align: middle;">
-                        <td>Participant #${i}</td>
-                        <td>
-                            <input type="number" min="0" max="${duration.val() - 1}" 
-                                title="When did Participant #${i} first enter the study? Report this as number of ${units} since the study started. This can be any number from 0 (start of the study) to ${duration.val() - 1} (just before the end of the study)." 
-                                class="initiation" required>
-                        </td>
-                        <td>
-                            <input type="number" min="1" max="${duration.val()}" 
-                                   title="This could be due to contracting disease/loss of follow-up/study end." 
-                                   class="end" required>
-                        </td>
-                        <td class="person-time"></td>
-                        <td>
-                            <select class="developed-disease" title="Did Participant #${i} develop the disease when the follow-up was done?"
-                                required>
-                                <option value="">Select</option>
-                                <option value="yes">Yes</option>
-                                <option value="no">No</option>
-                            </select>
-                        </td>
-                    </tr>
-                `;
-                tableBody.append(row);
-            }
-
-            $('.initiation').on('input', function() {
-                const row = $(this).closest('tr');
-                const initiationValue = parseInt($(this).val());
-                const endInput = row.find('.end');
-                const maxDuration = duration.val();
-
-                if (!isNaN(initiationValue)) {
-                    endInput.attr('min', initiationValue + 1);
-                    endInput.attr('title', `This could be due to contracting disease/loss of follow-up/study end. Report this as number of ${units} since the study started. This can be any number from ${initiationValue + 1} (just after the participant entered the study) to ${maxDuration} (the end of the study).`);
-                } else {
-                    endInput.attr('min', 1);
-                    endInput.attr('title', `This could be due to contracting disease/loss of follow-up/study end. Report this as number of ${units} since the study started. This can be any number from 1 to ${maxDuration} (the end of the study).`);
+                for (let i = 1; i <= numSubjectsVal; i++) {
+                    const row = `
+                        <tr style="text-align: center;vertical-align: middle;">
+                            <td>Participant #${i}</td>
+                            <td>
+                                <input type="number" min="1" max="${durationVal}" 
+                                    title="When did Participant #${i} first enter the study? Report this as number of ${units} since the study started. This can be any number from 1 (start of the study) to ${durationVal} (end of the study)." 
+                                    class="initiation" required>
+                            </td>
+                            <td>
+                                <input type="number" min="1" max="${durationVal}" 
+                                    title="This could be due to contracting disease/loss of follow-up/study end. Report this as number of ${units} since the study started. This can be any number after the initiation of follow-up to ${durationVal} (end of the study)." 
+                                    class="end" required>
+                            </td>
+                            <td class="person-time"></td>
+                            <td>
+                                <select class="developed-disease" title="Did Participant #${i} develop the disease when the follow-up was done?"
+                                    required>
+                                    <option value="">Select</option>
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.append(row);
                 }
 
-                updateTotals();
-            });
+                $('.initiation').on('input', function() {
+                    const row = $(this).closest('tr');
+                    const initiationValue = parseFloat($(this).val());
+                    const endInput = row.find('.end');
 
-            $('.end').on('input', function() {
-                const row = $(this).closest('tr');
-                const initiation = parseInt(row.find('.initiation').val());
-                const end = parseInt(row.find('.end').val());
-                if (initiation >= 0 && end && end >= initiation) {
-                    row.find('.person-time').text(end - initiation);
-                } else {
+                    let isValid = true;
+
+                    // Validate initiation
+                    if (isNaN(initiationValue) || !Number.isInteger(Number(initiationValue)) || initiationValue < 1 || initiationValue > duration) {
+                        $(this).addClass('invalid');
+                        isValid = false;
+                        $(this).attr('title', `This is when the Participant first entered the study. Report this as number of ${units} since the study started. This can be any whole number from 1 (start of the study) to ${durationVal} (end of the study).`);
+                    } else {
+                        $(this).removeClass('invalid');
+                        isValid = true;
+                    }
+
+                    if (isValid) {
+                        endInput.attr('min', initiationValue);
+                        endInput.attr('title', `This could be due to contracting disease/loss of follow-up/study end. Report this as number of ${units} since the study started. This can be any number from ${initiationValue} (initiation of follow-up) to ${durationVal} (end of the study).`);
+                    } else {
+                        endInput.attr('min', 1);
+                        endInput.attr('title', `This could be due to contracting disease/loss of follow-up/study end. Report this as number of ${units} since the study started. This can be any number after the initiation of follow-up to ${durationVal} (the end of the study).`);
+                        return;
+                    }
+                    updateTotals();
+                });
+
+                $('.end').on('input', function() {
+                    const row = $(this).closest('tr');
+
                     row.find('.person-time').text('');
-                }
-                updateTotals();
-            });
+                    $('#total-person-time').text('');
+                    $('#num-disease-cases').text('');
 
-            $(document).on('change', '.developed-disease', function() {
-                updateTotals();
-            });
-        }
-    });
+                    const initiationElem =  row.find('.initiation');
+                    const initiationValue = parseFloat(initiationElem.val());
+                    const endInput = row.find('.end');
+                    const endVal = parseFloat(endInput.val());
 
-    function updateTotals() {
-        let totalPersonTime = 0;
-        let numDiseaseCases = 0;
+                    const initiationValid =  (!(initiationElem.hasClass('invalid')) && (!isNaN(initiationValue)));
 
-        $('#participant-table tbody tr').each(function() {
-            const personTime = parseInt($(this).find('.person-time').text());
-            const developedDisease = $(this).find('.developed-disease').val();
+                    let endValid = true;
 
-            if (!isNaN(personTime)) {
-                totalPersonTime += personTime;
-            }
+                    // Validate end when initiation may or may not have inValid class
+                    if (isNaN(endVal) || !Number.isInteger(Number(endVal)) || endVal < 1 || endVal > durationVal) {
+                        $(this).addClass('invalid');
+                        endValid = false;
+                        $(this).attr('title', `This could be due to contracting disease/loss of follow-up/study end. Report this as number of ${units} since the study started. This can be any number after the initiation of follow-up to ${durationVal} (the end of the study).`);
+                        return;
+                    }
 
-            if (developedDisease === 'yes') {
-                numDiseaseCases += 1;
+                    if (initiationValid && (endVal < initiationValue)) {
+                        $(this).addClass('invalid');
+                        endValid = false;
+                        $(this).attr('title', `This could be due to contracting disease/loss of follow-up/study end. Report this as number of ${units} since the study started. This can be any number from ${initiationValue} (initiation of follow-up) to ${durationVal} (end of the study).`);
+                        return;
+                    }
+
+                    $(this).removeClass('invalid');
+                    endValid = true;
+
+                    if (initiationValid && endValid) {
+                        row.find('.person-time').text(endVal - initiationValue + 1);
+                    } else {
+                        row.find('.person-time').text('');
+                        return;
+                    }
+
+                    updateTotals();
+                });
+
+                $(document).on('change', '.developed-disease', function() {
+                    updateTotals();
+                });
             }
         });
 
-        $('#total-person-time').text(totalPersonTime);
-        $('#num-disease-cases').text(numDiseaseCases);
-    }
+        function updateTotals() {
+            $('#total-person-time').text('');
+            $('#num-disease-cases').text('');
 
-    $('#calculateIncidenceRate').click(function() {
-        const duration = $('#duration').val();
-        const units = $('#time-unit').find('option:selected').text();
-        let totalPersonTime = 0;
-        let numDiseaseCases = 0;
-        let isValid = true;
+            let totalPersonTime = 0;
+            let numDiseaseCases = 0;
 
-        $('#participant-table tbody tr').each(function() {
-            const row = $(this);
-            const initiationInput = row.find('.initiation');
-            const endInput = row.find('.end');
-            const developedDiseaseInput = row.find('.developed-disease');
+            $('#participant-table tbody tr').each(function() {
+                const personTime = parseInt($(this).find('.person-time').text());
+                const developedDisease = $(this).find('.developed-disease').val();
 
-            let initiation = parseInt(initiationInput.val());
-            let end = parseInt(endInput.val());
-            let developedDisease = developedDiseaseInput.val();
+                if (!isNaN(personTime)) {
+                    totalPersonTime += personTime;
+                } else {
+                    return;
+                }
 
-            // Reset validation styles
-            initiationInput.removeClass('invalid');
-            endInput.removeClass('invalid');
+                if (developedDisease === 'yes') {
+                    numDiseaseCases += 1;
+                }
+            });
 
-            if (isNaN(initiation)) {
-                initiation = 0;
-                row.find('.initiation').val(initiation);
-            }
+            $('#total-person-time').text(totalPersonTime);
+            $('#num-disease-cases').text(numDiseaseCases);
+        }
 
-            if (isNaN(end)) {
-                end = parseInt(duration);
-                row.find('.end').val(end);
-            }
+        $('#calculateIncidenceRate').click(function() {
 
-            // Validate initiation
-            if (initiation < 0 || initiation >= duration) {
-                initiationInput.addClass('invalid');
-                isValid = false;
-                initiationInput.attr('title', `This is when the Participant first entered the study. Report this as number of ${units} since the study started. This can be any number from 0 (start of the study) to ${duration - 1} (just before the end of the study).`);
-            }
+            $('#incidenceRate1').html("");
 
-            // Validate end
-            if (end <= initiation || end > duration) {
-                endInput.addClass('invalid');
-                isValid = false;
-                endInput.attr('title', `This could be due to contracting disease/loss of follow-up/study end. Report this as number of ${units} since the study started. This can be any number from ${initiation + 1} (just after the participant entered the study) to ${duration} (the end of the study).`);
-            }
+            const duration = $('#duration').val();
+            const units = $('#time-unit').find('option:selected').text();
+            let totalPersonTime = 0;
+            let numDiseaseCases = 0;
+            let isValid = true;
 
-            if (!developedDisease) {
-                developedDisease = 'no';
-                row.find('.developed-disease').val(developedDisease);
-            }
+            $('#participant-table tbody tr').each(function() {
+                const row = $(this);
+                const initiationInput = row.find('.initiation');
+                const endInput = row.find('.end');
+                const developedDiseaseInput = row.find('.developed-disease');
 
-            if (!isNaN(initiation) && !isNaN(end) && end >= initiation) {
-                const personTime = end - initiation;
+                if (initiationInput.hasClass('invalid') || endInput.hasClass('invalid')) {
+                    // invalid input.. just exit from loop and return.. (do not set the totals)
+                    isValid = false;
+                    return false;
+                }
+
+                let initiation = parseInt(initiationInput.val());
+                let end = parseInt(endInput.val());
+                let developedDisease = developedDiseaseInput.val();
+
+                if (isNaN(initiation)) {
+                    initiation = 1;
+                    row.find('.initiation').val(initiation);
+                }
+
+                if (isNaN(end)) {
+                    end = parseInt(duration);
+                    row.find('.end').val(end);
+                }
+
+                if (!developedDisease) {
+                    developedDisease = 'no';
+                    row.find('.developed-disease').val(developedDisease);
+                }
+
+                const personTime = end - initiation + 1;
                 row.find('.person-time').text(personTime);
                 totalPersonTime += personTime;
-            }
 
-            if (developedDisease === 'yes') {
-                numDiseaseCases += 1;
-            }
+                if (developedDisease === 'yes') {
+                    numDiseaseCases += 1;
+                }
+            });
+
+            if (!isValid) return;
+
+            $('#total-person-time').text(totalPersonTime);
+            $('#num-disease-cases').text(numDiseaseCases);
+
+            var multiplier = $('#multiplier').val();
+
+            const incidenceRate = numDiseaseCases / totalPersonTime * multiplier;
+            const formattedIncidenceRate = (Number) (incidenceRate.toFixed(2).replace(/\.?0+$/, ''));
+
+            const multiplierMsg = `<span class="tooltip" >${multiplier}<span class="tooltiptext" style="width: 300px;">this is the multiplier you specified</span></span>`;
+
+            resultText = `<span class="tooltip">Incidence Rate (Incidence Density) = ${formattedIncidenceRate}<span class="tooltiptext" style="width: 450px;">Calculated as: <br><span class="fraction"><span class="numerator">Num. of Disease cases (${numDiseaseCases})</span><span class="denominator">Total Person-${units} (${totalPersonTime})</span></span> * multipler (${multiplier})</span></span> per ${multiplierMsg} Person-${units}.`;
+
+            $('#incidenceRate1').html(resultText);
+
         });
 
-        $('#total-person-time').text(totalPersonTime);
-        $('#num-disease-cases').text(numDiseaseCases);
-
-        var multiplier = $('#multiplier').val();
-
-        const incidenceRate = numDiseaseCases / totalPersonTime * multiplier;
-        const formattedIncidenceRate = (Number) (incidenceRate.toFixed(2).replace(/\.?0+$/, ''));
-
-        const multiplierMsg = `<span class="tooltip" >${multiplier}<span class="tooltiptext" style="width: 300px;">this is the multiplier you specified</span></span>`;
-
-        resultText = `<span class="tooltip">Incidence Rate (Incidence Density) = ${formattedIncidenceRate}<span class="tooltiptext" style="width: 450px;">Calculated as: <br><span class="fraction"><span class="numerator">Num of Disease cases (${numDiseaseCases})</span><span class="denominator">Total Person-${units} (${totalPersonTime})</span></span> * multipler (${multiplier})</span></span> per ${multiplierMsg} Person-${units}.`;
-
-        $('#incidenceRate1').html(resultText);
-
     });
-
-});
-</script>
+    </script>
 </body>
