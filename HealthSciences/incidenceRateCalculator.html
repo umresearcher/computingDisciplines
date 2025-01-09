@@ -191,7 +191,7 @@
                 const units = timeUnit.find('option:selected').text();
                 const tableBody = $('#participant-table tbody');
                 tableBody.empty();
-                $('#total-person-time').text(`0`);
+                $('#total-person-time').text(``);
                 $('#num-disease-cases').text(`0`);
                 $('#incidenceRate1').text(``);
 
@@ -230,6 +230,7 @@
                     const row = $(this).closest('tr');
                     const initiationValue = parseFloat($(this).val());
                     const endInput = row.find('.end');
+                    $('#total-person-time').text(``);
 
                     let isValid = true;
 
@@ -247,6 +248,7 @@
                         endInput.attr('min', initiationValue);
                         endInput.attr('title', `This could be due to contracting disease/loss of follow-up/study end. Report this as number of ${units} since the study started. This can be any number from ${initiationValue} (initiation of follow-up) to ${durationVal} (end of the study).`);
                     } else {
+                        row.find('.person-time').text('');
                         endInput.attr('min', 1);
                         endInput.attr('title', `This could be due to contracting disease/loss of follow-up/study end. Report this as number of ${units} since the study started. This can be any number after the initiation of follow-up to ${durationVal} (the end of the study).`);
                         return;
@@ -259,7 +261,7 @@
 
                     row.find('.person-time').text('');
                     $('#total-person-time').text('');
-                    $('#num-disease-cases').text('');
+                    // $('#num-disease-cases').text('');
 
                     const initiationElem =  row.find('.initiation');
                     const initiationValue = parseFloat(initiationElem.val());
