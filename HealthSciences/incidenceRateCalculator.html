@@ -213,7 +213,6 @@
                     if (isNaN(personDuration) || personDuration <= 0) {
                         $(this).addClass('invalid');
                         isValid = false;
-                        $(this).attr('title', `How long was the Participant part of the study? Report this as number of ${units} since the study started. This can be any number &gt; 0.`);
                     } else {
                         $(this).removeClass('invalid');
                         isValid = true;
