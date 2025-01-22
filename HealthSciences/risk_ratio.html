@@ -717,7 +717,8 @@
             // Format the Numbers to 2 decimal places, showing only necessary decimal places
             var formattedincidenceExposed = incidenceExposed.toFixed(2).replace(/\.?0+$/, '');
             var formattedincidenceNotExposed = incidenceNotExposed.toFixed(2).replace(/\.?0+$/, '');
-            var formattedattrRisk = formattedincidenceExposed - formattedincidenceNotExposed;
+            var formattedattrRiskBefore = formattedincidenceExposed - formattedincidenceNotExposed;
+            var formattedattrRisk = formattedattrRiskBefore.toFixed(2).replace(/\.?0+$/, '');
 
             var attrRisk2 = formattedattrRisk/formattedincidenceExposed * 100;
             var formattedattrRisk2 = attrRisk2.toFixed(2).replace(/\.?0+$/, '');
