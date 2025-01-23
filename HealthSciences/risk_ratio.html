@@ -758,7 +758,8 @@
             message = `Prevalence of ${exposureMsg} = `;
             message += `<span class="tooltip">${formattedPrevE}<span class="tooltiptext" style="width: 500px;">${tooltipText5}</span></span>%`;
 
-            var formattedPrevE1 = formattedPrevE/100;
+            var prevE1 = formattedPrevE/100;
+            var formattedPrevE1 = prevE1.toFixed(4).replace(/\.?0+$/, '');
             var par = formattedPrevE1 * (riskRatio - 1)/(formattedPrevE1 * (riskRatio - 1) + 1) * 100;
             var formattedPar = par.toFixed(2).replace(/\.?0+$/, '');
 
