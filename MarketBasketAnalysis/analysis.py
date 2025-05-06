@@ -14,7 +14,7 @@ def load_css(file_path):
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 # Load the CSS file
-load_css('styles.css')
+load_css('MarketBasketAnalysis/styles.css')
 
 #add side for uploading file
 uploaded_file = st.sidebar.file_uploader("Upload a file")
