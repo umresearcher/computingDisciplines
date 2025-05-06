@@ -20,7 +20,7 @@ load_css('MarketBasketAnalysis/styles.css')
 uploaded_file = st.sidebar.file_uploader("Upload a file")
 
 #default dataset: read the dataset
-transactions_df = pd.read_csv('my_transactions.csv')#change the path to the dataset
+transactions_df = pd.read_csv('MarketBasketAnalysis/my_transactions.csv')#change the path to the dataset
 
 if uploaded_file is not None:
     transactions_df = pd.read_csv(uploaded_file)
@@ -29,7 +29,7 @@ if uploaded_file is not None:
     
 #put a download button
 st.sidebar.markdown('Download the template') 
-st.sidebar.markdown('[The template](https://github.com/umresearcher/Market-Basket-Analysis/blob/main/my_transactions.csv)')#update the link to the dataset
+st.sidebar.markdown('[The template](https://github.com/umresearcher/computingDisciplines/blob/main/MarketBasketAnalysis/my_transactions.csv)')#update the link to the dataset
       
 #add title to the app
 st.title('Market Basket Analysis')
