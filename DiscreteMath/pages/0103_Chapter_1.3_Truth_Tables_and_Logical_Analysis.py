@@ -85,7 +85,7 @@ with col1:
 
 with col2:
 
-    st.markdown("**Variables:** p, q, r, s")
+    st.markdown("**Variables:** p, q, r, s (use lowercase)")
 
     st.markdown("**Operators**")
 
@@ -103,6 +103,10 @@ with col2:
         st.markdown("∨&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OR", unsafe_allow_html=True)
         st.markdown("↔&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IFF", unsafe_allow_html=True)
 
+    st.caption(
+        "Use the symbols shown above. You may copy and paste them into expressions."
+    )
+    
 with col3:
     st.markdown("**Examples**")
 
@@ -127,9 +131,14 @@ if st.button("Generate Truth Table"):
             "Expression is valid."
         )
 
+        column_name = expression
+
+        if column_name in df.columns:
+            column_name = f"Result: {expression}"
+
         display_df = df.rename(
             columns={
-                "Result": expression
+                "Result": column_name
             }
         )
 
