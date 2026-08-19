@@ -2,6 +2,10 @@
 
 Interactive materials that help students connect discrete mathematics concepts to computing.
 
+## Live Application
+
+🌐 https://discretemath-umflint.streamlit.app/
+
 ## Current Topics
 
 ### Chapter 1: Logic
@@ -26,18 +30,6 @@ Interactive materials that help students connect discrete mathematics concepts t
 - Equivalence Relations
 - Partial Orders and Hasse Diagrams
 - N-ary Relations, SQL, and Datalog
-
-## Educational Goals
-
-The project helps students:
-
-- Connect discrete math concepts to computational ideas.
-- Explore concepts through multiple representations.
-- View abstract concepts as executable computational processes.
-
-## Live Application
-
-🌐 https://discretemath-umflint.streamlit.app/
 
 ## Publications
 
