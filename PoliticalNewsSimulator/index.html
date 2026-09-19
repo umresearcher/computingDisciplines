@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Political News Simulator</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="app.js" defer></script>
+</head>
+<body>
+
+    <h1>Political News Recommender Simulator</h1>
+
+    <div class="controls">
+
+        <div class="panel">
+
+            <h2>User</h2>
+
+            <label>
+                <strong>Your Political Leaning</strong>
+            </label>
+
+            <div class="slider-row">
+                <span class="endpoint">
+                    Strongly Left
+                </span>
+
+                <input
+                    type="range"
+                    id="leaning"
+                    min="-2"
+                    max="2"
+                    step="1"
+                    value="0"
+                >
+
+                <span class="endpoint">
+                    Strongly Right
+                </span>
+            </div>
+
+            <div class="current-selection">
+                Current Selection:
+                <span id="leaningValue" class="current-value">
+                    Center
+                </span>
+            </div>
+
+            <p class="help-text">
+                Choose an overall political orientation.
+                The platform will use this information to
+                estimate which articles are most likely
+                to match your interests.
+            </p>
+
+        </div>
+        
+        <!-- <div class="panel">
+            <h2>User</h2>
+
+            <label>
+                Political Leaning
+            </label>
+
+            <input
+                type="range"
+                id="leaning"
+                min="-2"
+                max="2"
+                step="1"
+                value="0"
+            >
+
+            <div id="leaningValue">Center</div>
+
+            <div class="scale-labels">
+                <span>Strongly Left</span>
+                <span>Left</span>
+                <span>Center</span>
+                <span>Right</span>
+                <span>Strongly Right</span>
+            </div>
+
+            <p class="help-text">
+                Choose an overall political orientation.
+                The platform will use this information to estimate
+                which articles are most likely to match your interests.
+            </p>           
+        </div> -->
+
+        <div class="panel">
+            <h2>Platform</h2>
+
+            <label>Engagement Optimization</label>
+
+            <input
+                type="range"
+                id="engagementWeight"
+                min="0"
+                max="10"
+                value="5"
+            >
+
+            <span id="engagementValue">5</span>
+
+            <p class="help-text">
+                Values range from 0 to 10.
+
+                Higher values favor articles that are more
+                likely to attract attention, clicks,
+                comments, or shares.
+            </p>
+
+            <br><br>
+
+            <label>
+                <strong>Evidence Promotion</strong>
+            </label>
+
+            <input
+                type="range"
+                id="evidenceWeight"
+                min="0"
+                max="10"
+                value="5"
+            >
+
+            <span id="evidenceValue">5</span>
+
+            <p class="help-text">
+                Values range from 0 to 10.
+
+                Higher values favor articles that support
+                their claims using evidence such as studies,
+                surveys, expert testimony, reviews, or analyses.
+            </p>
+
+            <br><br>
+
+            <label>Hostility Moderation</label>
+
+            <input
+                type="range"
+                id="hostilityWeight"
+                min="0"
+                max="10"
+                value="5"
+            >
+
+            <span id="hostilityValue">5</span>
+
+            <p class="help-text">
+                Values range from 0 to 10.
+
+                Higher values more strongly reduce articles
+                containing personal attacks, accusations,
+                or hostile language.
+            </p>
+
+        </div>
+
+    </div>
+
+    <button id="generateBtn">
+        Generate Feed
+    </button>
+
+    <hr>
+
+    <div id="stats"></div>
+
+    <hr>
+
+    <div id="feed"></div>
+
+</body>
+</html>
