@@ -33,7 +33,7 @@ Computing serves disciplinary learning goals. The disciplinary learning goals re
 
 Interactive materials that connect discrete mathematics concepts such as logic, relations, graphs, matrices, databases, and inference to computing.
 
-🌐 https://discretemath-umflint.streamlit.app/
+🌐 [https://discretemath-umflint.streamlit.app/](https://discretemath-umflint.streamlit.app/)
 
 ---
 
@@ -41,7 +41,7 @@ Interactive materials that connect discrete mathematics concepts such as logic, 
 
 Interactive epidemiology tools designed to reduce barriers created by mathematical calculations and math anxiety. Students focus on understanding epidemiological concepts and interpretation rather than computation mechanics.
 
-🌐 https://umresearcher.github.io/computingDisciplines/HealthSciences/calculators.html
+🌐 [https://umresearcher.github.io/computingDisciplines/HealthSciences/calculators.html](https://umresearcher.github.io/computingDisciplines/HealthSciences/calculators.html)
 
 ---
 
@@ -49,7 +49,7 @@ Interactive epidemiology tools designed to reduce barriers created by mathematic
 
 Interactive materials that help marketing and business students understand market basket analysis, association rules, support, confidence, and related measures through exploration of transactional data.
 
-🌐 https://marketbasketanalysis-umflint.streamlit.app/
+🌐 [https://marketbasketanalysis-umflint.streamlit.app/](https://marketbasketanalysis-umflint.streamlit.app/)
 
 ## Publications
 
