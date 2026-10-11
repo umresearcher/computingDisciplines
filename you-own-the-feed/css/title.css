@@ -1,0 +1,65 @@
+@charset "utf-8";
+/* Title page: sky, moon, clouds, hero text and the animated city (assets/city.svg animates itself). */
+.title-page { position: relative; overflow: hidden; background: linear-gradient(180deg, #15133A 0%, #1C1849 28%, #2A2361 50%, #3F3182 68%, #5E4596 84%, #8A5FA8 100%); padding: 0 16px 28px; }
+.title-page .top { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 26px 24px 0; flex-wrap: wrap; }
+.title-page .top span { font-size: 15px; color: var(--lilac); }
+.sky { position: absolute; inset: 0; pointer-events: none; }
+.stars-a { animation: twinkle 4s ease-in-out infinite; } .stars-b { animation: twinkle 5.5s ease-in-out 1.2s infinite; }
+@keyframes twinkle { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+.moon { position: absolute; right: max(40px, calc(50% - 500px)); top: 120px; width: 140px; height: 140px; border-radius: 50%; background: rgba(246,242,231,.08); }
+.moon::before { content: ""; position: absolute; inset: 28px; border-radius: 50%; background: var(--paper); }
+.moon::after { content: ""; position: absolute; left: 70px; top: 48px; width: 16px; height: 16px; border-radius: 50%; background: #E4DFF5; box-shadow: -14px 30px 0 -3px #E4DFF5; }
+.cloud { position: absolute; border-radius: 999px; animation: drift 14s ease-in-out infinite; }
+@keyframes drift { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(14px); } }
+.hero { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; padding-top: 92px; }
+.hero h1 { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: clamp(44px, 8vw, 80px); line-height: 1; }
+.hero h1 em { font-style: normal; color: var(--signal); }
+.hero p { margin: 0; max-width: 700px; font-size: clamp(18px, 2.2vw, 21px); line-height: 1.5; color: #E4DFF5; }
+.hero .btn { margin-top: 14px; min-height: 66px; padding: 0 38px 0 32px; font-size: 28px; border-radius: 18px; box-shadow: 0 7px 0 var(--signal-shadow); }
+.city { position: relative; z-index: 1; width: 100%; max-width: 772px; margin: 52px auto 0; }
+.city img { display: block; width: 100%; height: auto; }
+.title-foot { position: relative; z-index: 2; text-align: center; font-size: 14px; color: var(--paper); opacity: .85; margin-top: 18px; }
+
+@media (max-width: 860px) {
+  .hero { padding-top: 56px; }
+  .moon { top: 84px; width: 96px; height: 96px; right: 16px; }
+  .moon::before { inset: 18px; } .moon::after { left: 46px; top: 32px; width: 11px; height: 11px; }
+}
+
+/* ---------- title motion ---------- */
+/* Hero text arrives in sequence */
+.hero > * { animation: rise .7s cubic-bezier(.2, .8, .2, 1) both; }
+.hero > :nth-child(2) { animation-delay: .12s; }
+.hero > :nth-child(3) { animation-delay: .24s; }
+.hero > :nth-child(4) { animation-delay: .36s; }
+.hero > :nth-child(5) { animation-delay: .48s; }
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+/* "Feed" underline sweeps in, then the word gently glows */
+.hero h1 em { position: relative; display: inline-block; animation: feedGlow 3.2s ease-in-out 1s infinite; }
+.hero h1 em::after { content: ""; position: absolute; left: 4%; right: 4%; bottom: -.06em; height: .08em; border-radius: 99px; background: var(--signal); transform-origin: left; animation: sweep .8s .7s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes sweep { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes feedGlow { 0%, 100% { text-shadow: 0 0 0 rgba(255, 210, 63, 0); } 50% { text-shadow: 0 0 28px rgba(255, 210, 63, .45); } }
+
+/* Run button breathes so it reads as the next step */
+.hero .btn { animation: rise .7s .36s cubic-bezier(.2, .8, .2, 1) both, nudge 2.4s 1.4s ease-in-out infinite; }
+@keyframes nudge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+.hero .btn:hover, .hero .btn:focus-visible { animation-play-state: paused; }
+
+/* The town floats like an island; its own animations run inside the SVG */
+.city { animation: arrive 1.1s .3s cubic-bezier(.2, .8, .2, 1) both; }
+.city img { animation: float 7s 1.4s ease-in-out infinite; }
+@keyframes arrive { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: none; } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+/* Moon halo pulses; a shooting star crosses now and then */
+.moon { animation: halo 6s ease-in-out infinite; }
+@keyframes halo { 0%, 100% { box-shadow: 0 0 0 0 rgba(246, 242, 231, .06); } 50% { box-shadow: 0 0 0 18px rgba(246, 242, 231, .04); } }
+.shoot { position: absolute; top: 90px; left: 8%; width: 120px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, rgba(246,242,231,0), #F6F2E7); transform: rotate(18deg); opacity: 0; pointer-events: none; animation: shoot 9s 2s ease-out infinite; }
+.shoot.two { top: 230px; left: 62%; animation-delay: 6.5s; animation-duration: 11s; }
+@keyframes shoot { 0%, 88% { opacity: 0; transform: translate(0, 0) rotate(18deg); } 90% { opacity: 1; } 100% { opacity: 0; transform: translate(260px, 84px) rotate(18deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero > *, .city, .city img, .hero h1 em, .hero h1 em::after, .moon, .hero .btn { animation: none !important; }
+  .shoot { display: none; }
+}
