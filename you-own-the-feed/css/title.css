@@ -1,29 +1,54 @@
 @charset "utf-8";
 /* Title page: sky, moon, clouds, hero text and the animated city (assets/city.svg animates itself). */
-.title-page { position: relative; overflow: hidden; background: linear-gradient(180deg, #15133A 0%, #1C1849 28%, #2A2361 50%, #3F3182 68%, #5E4596 84%, #8A5FA8 100%); padding: 0 16px 28px; }
-.title-page .top { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 26px 24px 0; flex-wrap: wrap; }
-.title-page .top span { font-size: 15px; color: var(--lilac); }
-.sky { position: absolute; inset: 0; pointer-events: none; }
+/* One screen, no scrolling: the page is exactly the viewport tall.
+   Tall/narrow windows stack text over the town; wide windows put them side by side.
+   The town fills whatever space is left and always shows whole (object-fit: contain). */
+.title-page { position: relative; overflow: hidden; flex: none; height: 100vh; height: 100dvh; min-height: 0; padding: 0 16px;
+  display: grid; grid-template-rows: auto minmax(0, 1fr) auto; grid-template-columns: minmax(0, 1fr);
+  background: linear-gradient(180deg, #15133A 0%, #1C1849 28%, #2A2361 50%, #3F3182 68%, #5E4596 84%, #8A5FA8 100%); }
+.sky { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .stars-a { animation: twinkle 4s ease-in-out infinite; } .stars-b { animation: twinkle 5.5s ease-in-out 1.2s infinite; }
 @keyframes twinkle { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
-.moon { position: absolute; right: max(40px, calc(50% - 500px)); top: 120px; width: 140px; height: 140px; border-radius: 50%; background: rgba(246,242,231,.08); }
-.moon::before { content: ""; position: absolute; inset: 28px; border-radius: 50%; background: var(--paper); }
-.moon::after { content: ""; position: absolute; left: 70px; top: 48px; width: 16px; height: 16px; border-radius: 50%; background: #E4DFF5; box-shadow: -14px 30px 0 -3px #E4DFF5; }
+.moon { position: absolute; right: max(32px, calc(50% - 560px)); top: 7vh; width: 120px; height: 120px; border-radius: 50%; background: rgba(246,242,231,.08); }
+.moon::before { content: ""; position: absolute; inset: 24px; border-radius: 50%; background: var(--paper); }
+.moon::after { content: ""; position: absolute; left: 60px; top: 41px; width: 14px; height: 14px; border-radius: 50%; background: #E4DFF5; box-shadow: -12px 26px 0 -3px #E4DFF5; }
 .cloud { position: absolute; border-radius: 999px; animation: drift 14s ease-in-out infinite; }
 @keyframes drift { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(14px); } }
-.hero { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; padding-top: 92px; }
-.hero h1 { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: clamp(44px, 8vw, 80px); line-height: 1; }
-.hero h1 em { font-style: normal; color: var(--signal); }
-.hero p { margin: 0; max-width: 700px; font-size: clamp(18px, 2.2vw, 21px); line-height: 1.5; color: #E4DFF5; }
-.hero .btn { margin-top: 14px; min-height: 66px; padding: 0 38px 0 32px; font-size: 28px; border-radius: 18px; box-shadow: 0 7px 0 var(--signal-shadow); }
-.city { position: relative; z-index: 1; width: 100%; max-width: 772px; margin: 52px auto 0; }
-.city img { display: block; width: 100%; height: auto; }
-.title-foot { position: relative; z-index: 2; text-align: center; font-size: 14px; color: var(--paper); opacity: .85; margin-top: 18px; }
 
-@media (max-width: 860px) {
-  .hero { padding-top: 56px; }
-  .moon { top: 84px; width: 96px; height: 96px; right: 16px; }
-  .moon::before { inset: 18px; } .moon::after { left: 46px; top: 32px; width: 11px; height: 11px; }
+.hero { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; padding-top: clamp(28px, 7vh, 72px); }
+.hero h1 { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: clamp(44px, min(8vw, 10vh), 84px); line-height: 1; }
+.hero h1 em { font-style: normal; color: var(--signal); }
+.hero p { margin: 0; max-width: 520px; font-size: clamp(17px, 2.2vh, 21px); line-height: 1.45; color: #E4DFF5; }
+.hero .btn { margin-top: 8px; min-height: 64px; padding: 0 38px 0 32px; font-size: 28px; border-radius: 18px; box-shadow: 0 7px 0 var(--signal-shadow); }
+
+.city { position: relative; z-index: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 3vh 0 1vh; }
+.city img { display: block; width: 100%; height: 100%; max-width: 900px; object-fit: contain; }
+.title-foot { position: relative; z-index: 2; text-align: center; font-size: 13px; line-height: 1.35; color: var(--paper); opacity: .7; padding: 6px 0 14px; }
+
+/* wide windows: text on the left, town on the right */
+@media (min-width: 700px) and (min-aspect-ratio: 4/3) {
+  .title-page { grid-template-columns: minmax(300px, 5fr) minmax(0, 7fr); grid-template-rows: minmax(0, 1fr) auto; column-gap: 2vw; padding: 0 max(24px, calc(50% - 680px)); }
+  .hero { grid-column: 1; grid-row: 1; align-self: center; align-items: flex-start; text-align: left; padding: 0 0 0 2vw; }
+  .hero h1 { font-size: clamp(44px, min(5.6vw, 12vh), 96px); }
+  .city { grid-column: 2; grid-row: 1; padding: 4vh 0 1vh; }
+  .city img { max-width: none; }
+  .title-foot { grid-column: 1 / -1; grid-row: 2; }
+  .moon { right: auto; left: max(24px, calc(50% - 660px)); top: 5vh; width: 96px; height: 96px; }
+  .moon::before { inset: 19px; } .moon::after { left: 48px; top: 33px; width: 11px; height: 11px; }
+}
+
+@media (max-width: 699px) {
+  .moon { top: 10px; width: 64px; height: 64px; right: 8px; }
+  .moon::before { inset: 12px; } .moon::after { left: 30px; top: 21px; width: 8px; height: 8px; box-shadow: -8px 16px 0 -2px #E4DFF5; }
+  .cloud { display: none; }
+  .hero .btn { width: 100%; max-width: 360px; }
+  .title-foot { font-size: 12px; padding-bottom: 10px; }
+}
+
+/* very small screens: allow a scroll rather than squashing the town to nothing */
+@media (max-height: 520px) and (max-width: 699px) {
+  .title-page { height: auto; min-height: 100dvh; grid-template-rows: auto auto auto; }
+  .city img { height: auto; max-height: 70vh; }
 }
 
 /* ---------- title motion ---------- */

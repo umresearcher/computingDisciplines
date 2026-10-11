@@ -8,7 +8,7 @@
   --font-body: "Atkinson Hyperlegible", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   color-scheme: dark;
 }
-html, body { height: 100%; }
+html, body { height: 100%; margin: 0; }
 body { background: var(--night); color: var(--paper); font-family: var(--font-body); font-size: 16px; }
 *, *::before, *::after { box-sizing: border-box; }
 #app { min-height: 100%; display: flex; flex-direction: column; }
@@ -25,6 +25,9 @@ h1, h2 { text-wrap: balance; }
 .brand { display: flex; align-items: center; gap: 12px; }
 .brand b { font-family: var(--font-display); font-weight: 800; font-size: 22px; }
 .brand span { font-size: 15px; color: var(--lilac); }
+button.brand { background: none; border: 0; padding: 6px 8px; margin: -6px -8px; color: inherit; text-align: left; cursor: pointer; border-radius: 12px; }
+button.brand:hover b, button.brand:focus-visible b { color: var(--signal); }
+button.brand:hover { background: rgba(246, 242, 231, .06); }
 .progress { display: flex; align-items: center; gap: 12px; font-size: 15px; color: var(--lilac); }
 .progress .track { width: 160px; height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
 .progress .fill { height: 100%; border-radius: 4px; background: var(--signal); transition: width .5s ease; }

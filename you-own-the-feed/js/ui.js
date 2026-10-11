@@ -12,7 +12,7 @@
     if (clicks === undefined) clicks = lastClicks();
     if (clicks === null) c = '<div class="clicks" title="Clicks: predicted reactions on the stories you show, compared with showing the newest stories first."><span>Clicks</span><strong>—</strong><small>simulated</small></div>';
     else c = '<div class="clicks ' + (clicks >= 0 ? "up" : "down") + '" title="Predicted reactions on the stories you show, compared with showing the newest stories first."><span>Clicks</span><strong>' + (clicks >= 0 ? "▲ " : "▼ ") + signed(clicks) + "</strong><small>vs. newest-first · simulated</small></div>";
-    return '<header class="hud"><div class="brand">' + LOGO + "<b>TownSquare</b><span>Algorithm desk</span></div>" +
+    return '<header class="hud"><button class="brand" data-act="restart" title="Back to the start" aria-label="TownSquare: back to the start">' + LOGO + "<b>TownSquare</b><span>Algorithm desk</span></button>" +
       '<div class="progress"><span><span class="label-long">Scene </span>' + scene + " of " + TOTAL + "</span>" +
       '<div class="track" role="progressbar" aria-label="Progress" aria-valuemin="0" aria-valuemax="' + TOTAL + '" aria-valuenow="' + scene + '"><div class="fill" style="width:' + (scene / TOTAL * 100).toFixed(1) + '%"></div></div></div>' + c + "</header>" + algoBar();
   }
