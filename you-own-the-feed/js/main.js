@@ -31,14 +31,13 @@
       render(false); refocus("[data-enter]");
     }
     else if (p[0] === "restart") { reset(); go("title"); }
-    else if (p[0] === "dial" || p[0] === "labreset" || p[0] === "laboff") {
+    else if (p[0] === "dial" || p[0] === "labreset") {
       var L = state.lab;
       L.prev = labRank(L).slice(0, 3).map(function (c) { return c.s.id; });
       if (p[0] === "dial") {
-        L.w = Object.assign({}, L.w); L.w[p[1]] = Number(p[2]);
-        L.change = LAB_DIALS.filter(function (d) { return d.key === p[1]; })[0].label + " \u2192 " + WORDS[Number(p[2])];
-      } else if (p[0] === "labreset") { L.w = labStart(); L.change = "Back to your rules"; }
-      else { L.w = { wR: 0, wI: 0, wE: 0, wV: 0, wH: 0 }; L.change = "All dials off"; }
+        L.w = Object.assign({}, L.w); L.w[p[1]] = Number(p[2]); L.last = p[1];
+        L.change = LAB_DIALS.filter(function (d) { return d.key === p[1]; })[0].label + " \u2192 " + WORDS[Number(p[2]) - 1];
+      } else if (p[0] === "labreset") { L.w = labStart(); L.last = null; L.change = "Back to your rules"; }
       render(false); refocus('[data-act="' + a + '"]');
     }
     else if (p[0] === "reader") { state.lab.reader = p[1]; state.lab.prev = null; state.lab.change = "Now showing " + E.READERS[p[1]].name + "\u2019s feed"; render(false); refocus('[data-act="' + a + '"]'); }

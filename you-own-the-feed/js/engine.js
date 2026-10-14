@@ -18,89 +18,70 @@
     return stories.filter(function (s) { return s.d >= from && s.d <= day; });
   }
 
-  function matches(story, reader) {
-    var likes = READERS[reader].likes;
-    return likes.indexOf(story.topic) >= 0 || (likes.indexOf("local") >= 0 && story.local === 1);
-  }
+  // the reader follows this story's topic (interest level High)
+  function matches(story, reader) { return story.I[IDX[reader]] === 3; }
 
   // Newest first: what the feed would show with no ranking rule at all.
   function newestFirst(list) {
     return list.slice().sort(function (a, b) { return a.d < b.d ? 1 : a.d > b.d ? -1 : b.id - a.id; });
   }
 
-  /* Rank one day's pool for one reader.
-     w.wR reactions, w.wI interests, w.wE reliability, w.wV variety, w.wH "more of what you clicked".
-     history = topics this reader opened on earlier days (most recent last). */
-  function rank(list, reader, w, history) {
-    history = history || [];
-    var scored = list.map(function (s) {
-      var m = matches(s, reader) ? 1 : 0;
-      var rel = s.rel === 1 ? 1 : s.rel === 0 ? -1 : 0;
-      var h = history.filter(function (t) { return t === s.topic; }).length;
-      var parts = {
-        reactions: w.wR * Math.min(1, s.r / 20),
-        interests: w.wI * m,
-        reliability: w.wE * rel * 0.6,
-        habit: w.wH * Math.min(h, 3) * 0.45
-      };
-      return { s: s, match: m, parts: parts, base: parts.reactions + parts.interests + parts.reliability + parts.habit };
-    });
-    var picked = [];
-    var lastTopics = history.slice(-3);
-    for (var k = 0; k < 3; k++) {
-      var best = null, bestV = -Infinity;
-      scored.forEach(function (c) {
-        if (picked.indexOf(c) >= 0) return;
-        var same = picked.filter(function (p) { return p.s.topic === c.s.topic; }).length;
-        var stale = lastTopics.indexOf(c.s.topic) >= 0 ? 1 : 0;
-        var v = c.base - w.wV * (0.45 * same + 0.25 * stale);
-        if (v > bestV || (v === bestV && c.s.r > best.s.r)) { bestV = v; best = c; }
-      });
-      if (!best) break;
-      best.final = bestV;
-      picked.push(best);
-    }
-    // the one rule that did the most to put each story there
-    picked.forEach(function (c) {
-      var p = c.parts, top = "reactions", val = p.reactions;
-      ["interests", "reliability", "habit"].forEach(function (k) { if (p[k] > val) { val = p[k]; top = k; } });
-      c.why = top;
-    });
-    var base = newestFirst(list);
-    picked.forEach(function (c) { c.was = base.indexOf(c.s) + 1; });
-    return picked;
-  }
+  /* Every story carries three levels on the same 1-3 scale (1 = Low, 2 = Mid, 3 = High), set in tools/prep_data.py:
+       R = predicted reactions, L = reliability, I = interest for [Mia, Leo, Sam].
+     A feed setting ("target") says which level you want for each one, plus how many topics the top 3 should cover:
+       { reactions: 1-3 | null, interests: 1-3 | null, reliability: 1-3 | null, topics: 1-3 | null }   (null = not set)
+     select() picks the stories whose levels are closest to the target:
+       1. distance = sum over the set levels of |story level - wanted level|   (0 = exact match);
+          the dial moved last (opts.focus) is a must-have (counts 10x), so the feed always answers the change you just made
+       2. ties: the topic the reader opened more often before (history), then more predicted reactions, then newer
+       3. topics: the top 3 must cover exactly that many topics (1 = one topic, 3 = three different topics) */
+  var IDX = { mia: 0, leo: 1, sam: 2 };
+  var DIMS = ["reactions", "interests", "reliability"];
+  var LEVELS = ["Low", "Mid", "High"];
 
+  function levelsOf(s, reader) { return { reactions: s.R, interests: s.I[IDX[reader]], reliability: s.L }; }
 
-  /* Rule lab ranking: every dial is on the same 0..1 scale so each one visibly matters.
-     reactions = percentile of predicted reactions within this week's pool; interests = 1 if the reader follows the topic;
-     reliability = +1 reliable outlet, -1 low-reliability outlet; a small recency term means "all dials off" = newest first. */
-  function rankLab(list, reader, w, n) {
-    var byR = list.slice().sort(function (a, b) { return a.r - b.r; });
-    var newest = newestFirst(list);
-    var N = Math.max(1, list.length - 1);
-    var scored = list.map(function (s) {
-      var pct = byR.indexOf(s) / N, rec = 1 - newest.indexOf(s) / N;
-      var m = matches(s, reader) ? 1 : 0, rel = s.rel === 1 ? 1 : s.rel === 0 ? -1 : 0;
-      var parts = { reactions: w.wR * pct, interests: w.wI * m, reliability: w.wE * rel * 0.8, recency: 0.6 * rec };
-      return { s: s, match: m, parts: parts, base: parts.reactions + parts.interests + parts.reliability + parts.recency };
-    });
-    var picked = [];
-    for (var k = 0; k < (n || 5); k++) {
-      var best = null, bestV = -Infinity;
-      scored.forEach(function (c) {
-        if (picked.indexOf(c) >= 0) return;
-        var same = picked.filter(function (p) { return p.s.topic === c.s.topic; }).length;
-        var v = c.base - w.wV * 0.6 * same;
-        if (v > bestV) { bestV = v; best = c; }
+  function select(list, reader, target, opts) {
+    opts = opts || {};
+    var n = opts.n || 3, history = opts.history || [], focus = opts.focus;
+    var perTopic = {};
+    list.forEach(function (s) { perTopic[s.topic] = (perTopic[s.topic] || 0) + 1; });
+    var cands = list.map(function (s) {
+      var lv = levelsOf(s, reader), dist = 0, miss = [];
+      DIMS.forEach(function (k) {
+        if (target[k] == null) return;
+        var d = Math.abs(lv[k] - target[k]);
+        dist += k === focus ? d * 10 : d;
+        if (d) miss.push(k);
       });
-      if (!best) break;
-      picked.push(best);
+      var habit = history.filter(function (t) { return t === s.topic; }).length;
+      return { s: s, lv: lv, dist: dist, miss: miss, habit: habit, match: lv.interests === 3 ? 1 : 0 };
+    });
+    cands.sort(function (a, b) {
+      return a.dist - b.dist || b.habit - a.habit || b.s.r - a.s.r || (a.s.d < b.s.d ? 1 : a.s.d > b.s.d ? -1 : b.s.id - a.s.id);
+    });
+
+    var picked = [], topics = [], k = target.topics;
+    for (var i = 0; i < cands.length && picked.length < 3; i++) {
+      var c = cands[i];
+      if (k) {
+        var isNew = topics.indexOf(c.s.topic) < 0;
+        var after = topics.length + (isNew ? 1 : 0), slotsLeft = 3 - picked.length - 1;
+        if (after > k || after + slotsLeft < k) continue;           // would make the topic count impossible
+        if (k === 1 && perTopic[c.s.topic] < 3) continue;            // one topic needs at least 3 stories
+        if (isNew) topics.push(c.s.topic);
+      }
+      picked.push(c);
     }
+    // "just missed": the next best stories, then anything left if the topic rule could not be met
+    cands.forEach(function (c) { if (picked.length < n && picked.indexOf(c) < 0) picked.push(c); });
+
     picked.forEach(function (c) {
-      var p = c.parts, top = "recency", val = p.recency;
-      ["reactions", "interests", "reliability"].forEach(function (k) { if (p[k] > val) { val = p[k]; top = k; } });
-      c.why = top;
+      c.why = "recency";
+      for (var j = 0; j < DIMS.length; j++) {
+        if (target[DIMS[j]] != null && c.lv[DIMS[j]] === target[DIMS[j]] && target[DIMS[j]] === 3) { c.why = DIMS[j]; break; }
+      }
+      if (c.why === "recency" && c.habit > 0) c.why = "habit";
     });
     return picked;
   }
@@ -122,6 +103,6 @@
     return { relevance: match / slots, reliability: rel / slots, variety: topicsPerFeed / feeds.length, reactions: reactions };
   }
 
-  var api = { READERS: READERS, addDays: addDays, pool: pool, rank: rank, rankLab: rankLab, newestFirst: newestFirst, matches: matches, metrics: metrics };
+  var api = { READERS: READERS, LEVELS: LEVELS, DIMS: DIMS, addDays: addDays, pool: pool, levelsOf: levelsOf, select: select, newestFirst: newestFirst, matches: matches, metrics: metrics };
   if (typeof module !== "undefined" && module.exports) module.exports = api; else root.FeedEngine = api;
 })(this);

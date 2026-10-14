@@ -1,4 +1,5 @@
-/* Game state, the three decisions as engine weights, and the feeds each decision produces. Exposes TS.game and TS.util. */
+/* Game state, the three decisions as a feed setting (which level of each characteristic to look for), and the feeds they produce.
+   Exposes TS.game and TS.util. */
 (function (TS) {
   "use strict";
   var E = window.FeedEngine;
@@ -16,36 +17,36 @@
     Object.keys(cache).forEach(function (k) { delete cache[k]; });
   }
 
-  function weights(r1, r2, r3) {
+  // Each decision fixes one level on the 1-3 scale (3 = High); anything not decided stays open (null).
+  function target(r1, r2, r3) {
     return {
-      wR: r1 === "interests" ? 1 : 4,
-      wI: r1 === "interests" ? 4 : 1,
-      wE: r2 === "boost" ? 3 : 0,
-      wV: r3 === "variety" ? 3 : 0,
-      wH: r3 === "focus" ? 3 : r3 === "variety" ? 0 : 2
+      reactions: r1 === "reactions" ? 3 : null,     // decision 1: rank by predicted reactions...
+      interests: r1 === "interests" ? 3 : null,     // ...or by the reader's interests
+      reliability: r2 === "boost" ? 3 : null,       // decision 2: favor reliable outlets
+      topics: r3 === "variety" ? 3 : r3 === "focus" ? 1 : null   // decision 3: three topics, or one
     };
   }
-  function feedFor(key, reader, day, w, history) {
-    var k = key + JSON.stringify(w) + (history || []).join(",");
-    if (!cache[k]) cache[k] = E.rank(E.pool(STORIES, day), reader, w, history);
+  function feedFor(key, reader, day, t, history) {
+    var k = key + JSON.stringify(t) + (history || []).join(",");
+    if (!cache[k]) cache[k] = E.select(E.pool(STORIES, day), reader, t, { history: history });
     return cache[k];
   }
   function baseline(day) { return E.newestFirst(E.pool(STORIES, day)).slice(0, 3); }
   function sumR(list) { return list.reduce(function (a, x) { return a + (x.s ? x.s.r : x.r); }, 0); }
   function clicksVs(feed, day) { var b = sumR(baseline(day)); return Math.round((sumR(feed) - b) / b * 100); }
 
-  function feed1(r1) { return feedFor("1", "leo", DAY1, weights(r1 || state.rule1)); }
-  function feed2(r2) { return feedFor("2", "leo", DAY2, weights(state.rule1, r2 || state.rule2)); }
+  function feed1(r1) { return feedFor("1", "leo", DAY1, target(r1 || state.rule1)); }
+  function feed2(r2) { return feedFor("2", "leo", DAY2, target(state.rule1, r2 || state.rule2)); }
   function miaHistory() {
     var hist = [], days = [];
     MIA_DAYS.forEach(function (d) {
-      var f = feedFor("m" + d, "mia", d, weights(state.rule1, state.rule2, null), hist.slice());
+      var f = feedFor("m" + d, "mia", d, target(state.rule1, state.rule2, null), hist.slice());
       days.push({ day: d, feed: f });
       hist.push(f[0].s.topic);
     });
     return { hist: hist, days: days };
   }
-  function feed3(r3) { var h = miaHistory().hist; return feedFor("3", "mia", DAY3, weights(state.rule1, state.rule2, r3 || state.rule3), h); }
+  function feed3(r3) { var h = miaHistory().hist; return feedFor("3", "mia", DAY3, target(state.rule1, state.rule2, r3 || state.rule3), h); }
 
   function fmtDate(iso, opts) {
     return new Date(iso + "T12:00:00Z").toLocaleDateString("en-US", Object.assign({ timeZone: "UTC", month: "long", day: "numeric" }, opts || {}));
@@ -61,7 +62,7 @@
     return null;
   }
 
-  TS.game = { DAY1: DAY1, DAY2: DAY2, MIA_DAYS: MIA_DAYS, DAY3: DAY3, TOTAL: TOTAL, FRESH: FRESH, state: state, reset: reset, weights: weights,
+  TS.game = { DAY1: DAY1, DAY2: DAY2, MIA_DAYS: MIA_DAYS, DAY3: DAY3, TOTAL: TOTAL, FRESH: FRESH, state: state, reset: reset, target: target,
     feedFor: feedFor, baseline: baseline, sumR: sumR, clicksVs: clicksVs, feed1: feed1, feed2: feed2, feed3: feed3, miaHistory: miaHistory, lastClicks: lastClicks };
   TS.util = { fmtDate: fmtDate, signed: signed, esc: esc, count: count, NUM: NUM };
 })(window.TS = window.TS || {});

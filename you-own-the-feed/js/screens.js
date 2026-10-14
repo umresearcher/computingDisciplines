@@ -120,7 +120,7 @@
       debater("morgan", "impatient", "Your rule is working. Change it, and who knows what happens to clicks?") +
       debater("alex", "dry", "Give reliable outlets an edge. Nobody's deleting anything — the rest just ranks lower.") +
       '</div><div class="spacer" style="min-height:20px"></div><div class="choices">' +
-      choiceCard(1, "Favor reliable outlets", "Stories from outlets with a good track record rank higher. Low-reliability outlets rank lower.", "Nothing is removed. A low-reliability story can still appear if nothing better fits.", "Effect on clicks: unknown", "rule2:boost") +
+      choiceCard(1, "Favor reliable outlets", "Stories from reliable, center-leaning outlets rank higher. Low-reliability outlets rank lower.", "Nothing is removed. A low-reliability story can still appear if nothing better fits.", "Effect on clicks: unknown", "rule2:boost") +
       choiceCard(2, "Keep ranking as it is", "Who published a story doesn't count. Your rule 1 stays in charge.", "The feed keeps doing what it already does.", "Effect on clicks: predictable", "rule2:keep") +
       '</div><div class="hint">Both are real trade-offs. Press 1 or 2.</div></div></main>';
     state._deciding = null;
@@ -163,8 +163,8 @@
       debater("morgan", "pumped", "She opens it, she gets more of it. That's the whole deal. Why fight it?") +
       debater("jamie", "curious", "Or mix in a few other topics — and see what she does with them.") +
       '</div><div class="spacer" style="min-height:20px"></div><div class="choices">' +
-      choiceCard(1, "Add variety", "Limit repeats: the top 3 should cover more than one topic.", "Mia may see politics or business next to health.", "Fewer sure clicks", "rule3:variety") +
-      choiceCard(2, "Keep the focus", "Show more of what each reader opened before.", "Mia keeps getting the topic she clicks most.", "Proven, predictable clicks", "rule3:focus") +
+      choiceCard(1, "Add variety", "The top 3 must cover three different topics.", "Mia may see politics or business next to health.", "Fewer sure clicks", "rule3:variety") +
+      choiceCard(2, "Keep the focus", "All three stories on the topic the reader opened most.", "Mia keeps getting the topic she clicks most.", "Proven, predictable clicks", "rule3:focus") +
       '</div><div class="hint">Last decision. Press 1 or 2.</div></div></main>';
     state._deciding = null;
     return html;

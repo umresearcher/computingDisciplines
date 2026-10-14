@@ -1,7 +1,13 @@
-"""Turn the ReCOVery CSV into the small story table the game uses.
+"""Turn the ReCOVery CSV into the story table the game uses, and rate every story on the game's scale.
 
-Per story: id, title, publisher, date, topic, reliable (1/0/None), bias, reactions (simulated, in thousands).
-Usage: python3 -I prep_data.py news.csv stories.json
+Per story: id, t = title, p = publisher, d = date, topic, local (Chicago), rel = outlet reliability (1/0/None),
+r = simulated predicted reactions (thousands), and three levels on the 1-3 scale (1 = Low, 2 = Mid, 3 = High):
+  R  reactions:   which third of all headlines its predicted reactions fall in
+  L  reliability: 3 = reliable outlet rated center or center-leaning, 2 = reliable outlet rated strongly
+                  left/right (or not rated), 1 = low-reliability outlet (ReCOVery reliability + political-bias labels)
+  I  interest:    [Mia, Leo, Sam] - 3 = a topic the reader follows, 2 = a related topic, 1 = anything else
+The game picks the stories whose levels are closest to the dial settings.
+Usage: python3 -I prep_data.py news.csv ../js/data/stories.js
 """
 import csv
 import json
@@ -19,6 +25,30 @@ TOPICS = [
 ]
 # readers' interests (topic names above); "local" = Chicago stories, a tag on top of the topic
 READERS = {"mia": ["health", "schools"], "leo": ["business", "lockdown rules"], "sam": ["politics", "local"]}
+RELATED = {"mia": ["lockdown rules"], "leo": ["politics"], "sam": ["lockdown rules", "schools"]}
+READER_ORDER = ["mia", "leo", "sam"]
+
+
+def interest(story, reader):
+    if story["topic"] in READERS[reader] or ("local" in READERS[reader] and story["local"]):
+        return 3
+    return 2 if story["topic"] in RELATED[reader] else 1
+
+
+def rate(stories):
+    """Add the R / L / I levels. Reactions: cut points at the 1/3 and 2/3 quantiles of the whole dataset."""
+    rs = sorted(s["r"] for s in stories)
+    lo, hi = rs[len(rs) // 3], rs[2 * len(rs) // 3]
+    for s in stories:
+        s["R"] = 1 if s["r"] < lo else (2 if s["r"] < hi else 3)
+        if s["rel"] == 0:
+            s["L"] = 1                                  # low-reliability outlet
+        elif s["rel"] == 1 and s["bias"] not in ("Left", "Right"):
+            s["L"] = 3                                  # reliable outlet, rated center / center-leaning
+        else:
+            s["L"] = 2                                  # reliable but rated strongly one-sided, or not rated
+        s["I"] = [interest(s, rd) for rd in READER_ORDER]
+    return lo, hi
 
 
 def topic_of(title, body):
@@ -76,8 +106,16 @@ def main(src, out):
             "r": reactions(title),
         })
     stories.sort(key=lambda s: (s["d"], s["id"]))
-    json.dump(stories, open(out, "w"), ensure_ascii=True, separators=(",", ":"))
-    print(len(stories), "stories")
+    lo, hi = rate(stories)
+    keep = ("id", "t", "p", "d", "topic", "local", "rel", "r", "R", "L", "I")
+    slim = [{k: s[k] for k in keep} for s in stories]
+    body = json.dumps(slim, ensure_ascii=True, separators=(",", ":"))
+    if out.endswith(".js"):   # a script, so the game also runs from a local file
+        body = ("/* " + str(len(slim)) + " headlines from the ReCOVery COVID-19 news dataset (Jan-May 2020), made by tools/prep_data.py.\n"
+                "   R / L / I = reactions / reliability / interest [Mia, Leo, Sam] on the 1-3 scale (Low, Mid, High). */\n"
+                "window.STORIES = " + body + ";\n")
+    open(out, "w").write(body)
+    print(len(stories), "stories; reactions cut points", lo, hi)
 
 
 if __name__ == "__main__":

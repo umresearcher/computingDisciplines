@@ -54,16 +54,17 @@
   }
 
   function relBadge(s) {
+    if (s.rel === 1 && s.L === 2) return '<span class="badge rel" title="Reliable outlet, rated strongly left or right">Reliable \u00B7 strong lean</span>';
     if (s.rel === 1) return '<span class="badge rel">Reliable outlet</span>';
     if (s.rel === 0) return '<span class="badge low">Low-reliability outlet</span>';
     return '<span class="badge unk">Reliability not rated</span>';
   }
   var WHY = {
-    reactions: function (c) { return "high predicted reactions (" + c.s.r + "K)"; },
+    reactions: function (c) { return "high predicted reactions (" + c.s.r + "K, loudest third)"; },
     interests: function (c, reader) { return "matches what " + E.READERS[reader].name + " follows"; },
-    reliability: function () { return "reliable outlet, boosted by your rule"; },
+    reliability: function () { return "reliable, center-leaning outlet \u2014 your rule 2"; },
     habit: function (c, reader) { return "more of what " + E.READERS[reader].name + " opened before"; },
-    recency: function () { return "one of the newest stories (no dial pushed it)"; }
+    recency: function () { return "closest fit to your rules this week"; }
   };
   function storyMeta(s, reader, showMatch) {
     return '<span class="outlet">' + esc(s.p) + "</span><span>" + fmtDate(s.d, { month: "short" }) + "</span>" + relBadge(s) + '<span class="badge topic">' + s.topic + "</span>" +
