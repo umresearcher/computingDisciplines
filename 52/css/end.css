@@ -1,0 +1,98 @@
+/* Election night: the candidate under a spotlight, then the story of the campaign as you scroll. */
+.end { overflow: hidden; }
+.end .topbar { position: relative; z-index: 3; border: 0; }
+
+.hero { position: relative; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; align-items: center; }
+.end .topbar { align-self: stretch; }
+.beam {
+  position: absolute; left: 50%; top: 0; width: 760px; height: 100%; margin-left: -380px;
+  clip-path: polygon(41% 0, 59% 0, 100% 100%, 0 100%);
+  background: linear-gradient(180deg, rgba(255,255,255,.20) 0%, rgba(255,255,255,0) 92%);
+}
+.is-lose .beam { background: linear-gradient(180deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,0) 92%); }
+.hero-body { position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 16px 40px; text-align: center; animation: rise .9s var(--ease) both; }
+.kicker { font-size: 14px; font-weight: 700; letter-spacing: .24em; color: #8B9096; }
+.stage { margin-top: 10px; display: flex; flex-direction: column; align-items: center; }
+.figure { display: block; max-width: 70vw; height: auto; max-height: 48vh; }
+.podium {
+  margin-top: -22px; width: 300px; max-width: 80vw; height: 70px; border-radius: 10px 10px 4px 4px;
+  background: linear-gradient(180deg, #1A1D24, #0C0D11); border-top: 6px solid; color: var(--text);
+  display: flex; align-items: center; justify-content: center;
+}
+.floor { margin-top: -26px; width: 320px; height: 26px; border-radius: 50%; background: radial-gradient(ellipse, rgba(255,255,255,.12), rgba(255,255,255,0) 70%); }
+.end-name { margin-top: 18px; font-size: clamp(44px, 7vw, 72px); font-weight: 800; line-height: 1; letter-spacing: -0.03em; overflow-wrap: anywhere; }
+.end-line { margin-top: 10px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; font-size: 20px; }
+.end-line .sep { color: #3A3A42; }
+/* play again right away, or glide down to the story */
+.end-actions { margin-top: 26px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+.end-actions .btn { min-height: 54px; padding: 0 30px; font-size: 17px; display: inline-flex; align-items: center; gap: 8px; }
+.end-actions .ghost svg { width: 18px; height: 18px; animation: nudge 2s ease-in-out infinite; }
+@keyframes nudge { 0%, 100% { transform: none; } 50% { transform: translateY(3px); } }
+
+.confetti { position: absolute; inset: 0; pointer-events: none; }
+.confetti i { position: absolute; top: 0; width: 11px; height: 13px; animation: fall 8s linear infinite; }
+
+/* figure animations */
+.fig-wave { transform-origin: 100px 166px; animation: wave 1.6s ease-in-out infinite; }
+.fig-sad { transform-origin: 150px 500px; animation: sway 4s ease-in-out infinite; }
+.paper { transform-box: fill-box; transform-origin: center; animation: flutter 3.4s ease-in infinite; }
+.paper.p2 { animation-delay: .9s; } .paper.p3 { animation-delay: 1.8s; }
+
+/* sections below the hero */
+.block { max-width: 1040px; margin: 0 auto; padding: 80px clamp(16px, 4vw, 40px) 20px; }
+.eyebrow { font-size: 14px; font-weight: 700; letter-spacing: .2em; color: var(--muted); }
+.block h2 { margin: 8px 0 24px; font-size: clamp(30px, 4vw, 44px); font-weight: 800; letter-spacing: -0.02em; }
+.chart-wrap { overflow-x: auto; }
+.chart { width: 100%; min-width: 640px; height: auto; font-family: var(--font); }
+.moments { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.moment { background: #0D0E11; border: 1px solid #1F2026; border-radius: 22px; padding: 22px; display: flex; flex-direction: column; gap: 12px; }
+.moment b { font-size: 19px; line-height: 1.3; }
+.moment .soft { font-size: 16px; line-height: 1.45; }
+.big-delta { font-size: 54px; font-weight: 800; line-height: 1; }
+.big-delta.flat { color: var(--text); }
+.numbers { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+.number { border-top: 3px solid; padding-top: 16px; display: flex; flex-direction: column; gap: 6px; }
+.number span { font-size: 76px; font-weight: 800; line-height: 1; letter-spacing: -0.03em; }
+.number small { font-size: 17px; color: var(--soft); }
+.lesson { display: flex; align-items: baseline; gap: 22px; padding: 22px 0; border-top: 1px solid #1F2026; }
+.lesson-n { font-size: 18px; font-weight: 800; }
+.lesson-t { flex: 1; font-size: clamp(20px, 2.4vw, 28px); font-weight: 600; line-height: 1.3; }
+.lesson-src { display: block; margin-top: 6px; font-size: 14px; font-weight: 400; color: var(--muted); }
+.lesson .pill { color: var(--soft); white-space: nowrap; }
+.again { padding: 80px 20px 110px; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
+.again h2 { font-size: 40px; font-weight: 800; }
+.again .btn { margin-top: 8px; min-height: 56px; padding: 0 34px; font-size: 18px; }
+
+/* reveal on scroll (main.js adds .on when a block comes into view) */
+.rv { opacity: 0; transform: translate3d(0, 32px, 0); transition: opacity .9s ease, transform .9s var(--ease); }
+.rv.on { opacity: 1; transform: none; }
+.ln { stroke-dasharray: 1600; stroke-dashoffset: 1600; }
+.on .ln { transition: stroke-dashoffset 2.2s ease-out .2s; stroke-dashoffset: 0; }
+.mk { opacity: 0; transition: opacity .4s ease 2s; }
+.on .mk { opacity: 1; }
+
+@keyframes rise { from { opacity: 0; transform: translate3d(0, 24px, 0); } to { opacity: 1; transform: none; } }
+@keyframes fall { 0% { transform: translateY(-60px) rotate(0); } 100% { transform: translateY(110vh) rotate(600deg); } }
+@keyframes wave { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-6deg); } }
+@keyframes sway { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(1.5deg); } }
+@keyframes flutter { 0% { transform: translate(0, 0) rotate(0deg); opacity: 1; } 100% { transform: translate(40px, 120px) rotate(70deg); opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .rv { opacity: 1; transform: none; transition: none; }
+  .ln { stroke-dashoffset: 0; }
+  .mk { opacity: 1; }
+  .confetti, .fig-wave, .fig-sad, .paper, .end-actions svg { animation: none; }
+}
+@media (max-width: 800px) {
+  .end-line { flex-direction: column; gap: 4px; }
+  .end-line .sep { display: none; }
+  .figure { max-height: 40vh; }
+  .kicker { font-size: 12px; letter-spacing: .16em; }
+  .end-actions { width: 100%; flex-direction: column; }
+  .end-actions .btn { justify-content: center; }
+  .moments { grid-template-columns: 1fr; }
+  .numbers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .number span { font-size: 56px; }
+  .lesson { flex-wrap: wrap; gap: 10px 16px; }
+  .beam { width: 520px; margin-left: -260px; }
+}
