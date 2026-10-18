@@ -16,6 +16,41 @@
 
   function round1(x) { return Math.round(x * 10) / 10; }
 
+  /* The rest of the field, for the "Your race" tab. The game only tracks YOUR share;
+     everyone else is filled in around it: two small third-party candidates, a shrinking
+     group of undecided voters, and the main rival(s) get whatever is left. */
+  var OTHERS = {
+    D: { name: "Elaine Porter", party: "Democrat", color: "#4F8BFF", dark: "#1E3A78", look: { skin: "#F6D3B3", hair: "bun", hairColor: "#8B3A1E", glasses: true } },
+    R: { name: "Richard Hale", party: "Republican", color: "#F2545B", dark: "#5C1A20", look: { skin: "#E8B48F", hair: "side", hairColor: "#B8B8BE", glasses: false } },
+    L: { name: "Wes Calder", party: "Libertarian", color: "#E5B94E", dark: "#4A3A12", look: { skin: "#C68B5E", hair: "short", hairColor: "#1A1423", glasses: false } },
+    G: { name: "Mara Lind", party: "Green", color: "#5FB57A", dark: "#1C3A26", look: { skin: "#8D5A3B", hair: "curly", hairColor: "#1A1423", glasses: false } }
+  };
+
+  // everyone's share at one point of the race (step = index in run.history)
+  function fieldAt(party, mine, step) {
+    var undecided = round1(Math.max(2, 7 - step * 0.35));
+    var lib = round1(2.4 + 0.4 * Math.sin(step * 1.7));
+    var green = round1(1.5 + 0.3 * Math.sin(step * 2.3 + 1));
+    var rest = 100 - mine - lib - green - undecided;
+    var out = { me: mine, L: lib, G: green, undecided: undecided };
+    if (party === "I") {               // an independent faces both major parties
+      out.D = round1(rest * (0.51 + 0.03 * Math.sin(step * 1.3)));
+      out.R = round1(rest - out.D);
+    } else {
+      out[party === "D" ? "R" : "D"] = round1(rest);
+    }
+    return out;
+  }
+
+  // the race now and one step ago, plus the history of the main rival (for the chart)
+  function field(run) {
+    var h = run.history, n = h.length - 1;
+    var now = fieldAt(run.party, run.votes, n), before = fieldAt(run.party, h[Math.max(0, n - 1)], Math.max(0, n - 1));
+    var rivalKey = run.party === "D" ? "R" : run.party === "R" ? "D" : (now.D >= now.R ? "D" : "R");
+    var rival = h.map(function (v, i) { return fieldAt(run.party, v, i)[rivalKey]; });
+    return { now: now, before: before, rivalKey: rivalKey, rivalHistory: rival };
+  }
+
   function eventById(n) {
     for (var i = 0; i < window.EVENTS.length; i++) if (window.EVENTS[i].n === n) return window.EVENTS[i];
     return null;
@@ -142,7 +177,7 @@
     return "turn";
   }
 
-  CG.game = {
+  CG.game = { OTHERS: OTHERS, field: field,
     WIN: WIN, LOSE: LOSE, PARTY: PARTY,
     eventById: eventById, newRun: newRun, choose: choose, advance: advance, reactions: reactions
   };

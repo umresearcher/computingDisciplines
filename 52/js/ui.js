@@ -15,6 +15,7 @@
     return src ? ' <a class="src" href="' + esc(src[1]) + '" target="_blank" rel="noopener">' + esc(src[0]) + " \u2197</a>" : "";
   }
   function pct(v) { return v.toFixed(1) + "%"; }
+  function round1(x) { return Math.round(x * 10) / 10; }
   function barPos(v) { return Math.max(0, Math.min(100, (v - 30) / 26 * 100)); } // the bar shows 30%..56%
   function myName(st) { return st.name.trim() || "You"; }
   function handle(st) { return "@" + (myName(st).toLowerCase().replace(/[^a-z0-9]/g, "") || "you") + "2020"; }
@@ -22,6 +23,7 @@
 
   var ICON = {
     news: '<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 L12 3 L21 11 V21 H14 V15 H10 V21 H3 Z" fill="currentColor"/></svg>',
+    profile: '<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4.2" stroke="currentColor" stroke-width="2.2" fill="none"/><path d="M4 21 C4.5 16 8 14 12 14 C16 14 19.5 16 20 21" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>',
     race: '<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 V12 M10 20 V6 M16 20 V10 M22 20 V3" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
     reply: '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5 H20 V16 H11 L6 20 V16 H4 Z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>',
     share: '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4 L3 8 L7 12 M3 8 H17 V12 M17 20 L21 16 L17 12 M21 16 H7 V12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -66,7 +68,7 @@
       '<section class="intro-hero">' +
       '<div class="seats-wrap">' + seats("seats-off") + '<div class="seats-on">' + seats("seats-lit") + "</div>" + line +
       '<div class="count" role="img" aria-label="Vote share counter, rising toward 52 percent">' + roll(0) + roll(1) + '<i class="pt"></i>' + roll(2) + '<span class="pc">%</span></div></div>' +
-      '<p class="live"><i></i>Vote share \u00b7 live</p>' +
+      '<p class="live"><i></i><span class="live-text">Vote share \u00b7 live</span></p>' +
       "<h1>Run the campaign.<br>Reach 52.</h1>" +
       '<button class="btn big-btn" data-act="to-create">Start your campaign</button>' +
       "</section>" +
@@ -131,13 +133,17 @@
       return '<li><span class="muted small">' + esc(e.src || WIRE) + "</span><b>" + esc(e.news) + "</b></li>";
     }).join("");
     var developing = run.pending.length ? '<li><span class="small warn">Still developing</span><b>Something you posted is getting attention.</b></li>' : "";
+    var nav = function (key, icon, label) {
+      return '<button class="nav-item' + (st.tab === key ? " on" : "") + '" data-act="tab:' + key + '"' + (st.tab === key ? ' aria-current="page"' : "") + ">" + ICON[icon] + label + "</button>";
+    };
+    var view = st.tab === "race" ? raceView(st) : st.tab === "profile" ? profileView(st) : feedHtml;
     return '<div class="shell">' +
       '<nav class="side" aria-label="Menu"><div class="brand">' + '<button class="home" data-act="home-ask" aria-label="The 52: go to the main screen">' + A.LOGO + "<b>The 52</b></button>" + "</div>" +
-      '<span class="nav-item on">' + ICON.news + "News</span><span class=\"nav-item\">" + ICON.race + "Your race</span>" +
-      '<div class="me">' + me(st, 44) + '<div><b>' + esc(myName(st)) + '</b><span class="muted small">' + p.name + " · turn " + run.turn + "</span></div></div></nav>" +
+      nav("news", "news", "News") + nav("race", "race", "Your race") + nav("profile", "profile", "Profile") +
+      '<button class="me" data-act="tab:profile" aria-label="Open your profile">' + me(st, 44) + '<div><b>' + esc(myName(st)) + '</b><span class="muted small">' + p.name + " · turn " + run.turn + "</span></div></button></nav>" +
       '<main class="feed" id="feed">' +
-      '<div class="race-mini"><button class="home" data-act="home-ask" aria-label="The 52: go to the main screen">' + A.logo(30) + "</button>" + me(st, 32) + '<b class="vote-num">' + pct(run.votes) + '</b><div class="bar-track"><div class="bar-fill" style="width:' + barPos(run.votes) + "%;background:" + p.color + '"></div><i style="left:19.2%" class="mt out"></i><i style="left:84.6%" class="mt win"></i></div><span class="muted small">T' + run.turn + "</span></div>" +
-      feedHtml + "</main>" +
+      '<div class="race-mini"><button class="home" data-act="home-ask" aria-label="The 52: go to the main screen">' + A.logo(30) + "</button>" + '<button class="mini-me" data-act="tab:profile" aria-label="Open your profile">' + me(st, 32) + "</button>" + '<b class="vote-num">' + pct(run.votes) + '</b><div class="bar-track"><div class="bar-fill" style="width:' + barPos(run.votes) + "%;background:" + p.color + '"></div><i style="left:19.2%" class="mt out"></i><i style="left:84.6%" class="mt win"></i></div><span class="muted small">T' + run.turn + "</span></div>" +
+      tabs(st) + view + "</main>" +
       '<aside class="rail"><section class="box"><h2>Your race</h2>' + race(run) + "</section>" +
       '<section class="box"><h2>Also breaking</h2><ul class="list">' + upNext + developing + "</ul></section></aside>" +
       "</div>";
@@ -154,14 +160,108 @@
       '<div class="actions" aria-hidden="true"><span>' + ICON.reply + "Reply</span><span>" + ICON.share + "Share</span><span>" + ICON.like + "Like</span></div></div></article>";
   }
 
-  function tabs(color) {
-    return '<div class="tabs"><span class="tab on"><span style="border-color:' + color + '">Breaking</span></span><span class="tab">Your race</span></div>';
+  function tabs(st) {
+    var color = G.PARTY[st.run.party].color;
+    var one = function (key, label) {
+      var on = st.tab === key;
+      return '<button class="tab' + (on ? " on" : "") + '" data-act="tab:' + key + '"' + (on ? ' aria-current="page"' : "") + '><span' + (on ? ' style="border-color:' + color + '"' : "") + ">" + label + "</span></button>";
+    };
+    return '<div class="tabs">' + one("news", "Breaking") + one("race", "Your race") + one("profile", "Profile") + "</div>";
+  }
+
+  /* ------------------------------------------------------------ the "Your race" tab: everyone in the race */
+  function raceView(st) {
+    var run = st.run, p = G.PARTY[run.party], F = G.field(run), O = G.OTHERS;
+    var rows = [{ key: "me", name: myName(st), party: p.name, color: p.color, av: me(st, 44), you: true }];
+    ["D", "R", "L", "G"].forEach(function (k) {
+      if (F.now[k] === undefined) return;
+      var c = O[k];
+      rows.push({ key: k, name: c.name, party: c.party, color: c.color, av: A.avatar(c.look, c.color, c.dark, 44) });
+    });
+    rows.forEach(function (r) { r.v = F.now[r.key]; r.d = round1(r.v - F.before[r.key]); });
+    rows.sort(function (a, b) { return b.v - a.v; });
+
+    var row = function (r, i) {
+      var change = r.d === 0 ? "no change" : (r.d > 0 ? "\u25B2 " : "\u25BC ") + Math.abs(r.d).toFixed(1);
+      return '<li class="cand' + (r.you ? " you" : "") + '" style="--c:' + r.color + ";--i:" + i + '">' +
+        '<span class="cand-rank">' + (i + 1) + "</span>" + r.av +
+        '<div class="cand-main"><div class="cand-head"><b>' + esc(r.name) + "</b>" + (r.you ? '<span class="you-tag">You</span>' : "") +
+        (i === 0 ? '<span class="lead-tag">Leading</span>' : "") + '<span class="muted">' + r.party + "</span></div>" +
+        '<div class="cand-bar"><i style="width:' + (r.v / 60 * 100).toFixed(1) + '%"></i><em></em></div></div>' +
+        '<div class="cand-num"><b>' + pct(r.v) + '</b><span class="' + tone(r.d) + '">' + change + "</span></div></li>";
+    };
+    var undecided = '<li class="cand undecided" style="--i:' + rows.length + '"><span class="cand-rank"></span><span class="q">?</span>' +
+      '<div class="cand-main"><div class="cand-head"><b>Undecided</b><span class="muted">still choosing</span></div>' +
+      '<div class="cand-bar"><i style="width:' + (F.now.undecided / 60 * 100).toFixed(1) + '%"></i></div></div>' +
+      '<div class="cand-num"><b>' + pct(F.now.undecided) + "</b></div></li>";
+
+    // one line that says where you stand
+    var best = rows.filter(function (r) { return !r.you; })[0], gap = round1(run.votes - best.v);
+    var standing = gap > 0 ? "You lead " + esc(best.name) + " by " + gap.toFixed(1) + " points."
+      : gap < 0 ? "You trail " + esc(best.name) + " by " + Math.abs(gap).toFixed(1) + " points." : "You are tied with " + esc(best.name) + ".";
+    standing += " You need " + (run.votes >= 52 ? "nothing more" : (52 - run.votes).toFixed(1) + " more to reach 52%") + ".";
+
+    return '<section class="view race-view">' +
+      '<header class="view-head"><h2>The race</h2><p class="soft">' + standing + "</p></header>" +
+      '<ol class="cands">' + rows.map(row).join("") + undecided + "</ol>" +
+      '<p class="muted small legend"><i></i>52% wins outright \u00b7 35% and you\u2019re out</p>' +
+      raceChart(run, p, F) +
+      "</section>";
+  }
+
+  // you vs. your main rival, turn by turn
+  function raceChart(run, p, F) {
+    var mine = run.history, theirs = F.rivalHistory, rc = G.OTHERS[F.rivalKey];
+    var all = mine.concat(theirs), lo = Math.min(30, Math.floor(Math.min.apply(null, all)) - 2), hi = Math.max(56, Math.ceil(Math.max.apply(null, all)) + 2);
+    var n = Math.max(1, mine.length - 1), W = 440, H = 190;
+    var x = function (i) { return (20 + i * (W - 120) / n).toFixed(1); };
+    var y = function (v) { return (12 + (hi - v) / (hi - lo) * (H - 24)).toFixed(1); };
+    var line = function (vals, color, w) {
+      var pts = vals.map(function (v, i) { return x(i) + "," + y(v); }).join(" ");
+      var last = vals.length - 1;
+      return '<polyline points="' + pts + '" fill="none" stroke="' + color + '" stroke-width="' + w + '" stroke-linejoin="round" stroke-linecap="round"/>' +
+        '<circle cx="' + x(last) + '" cy="' + y(vals[last]) + '" r="5" fill="' + color + '"/>';
+    };
+    var tag = function (vals, color, label) {
+      var last = vals.length - 1;
+      return '<text x="' + (+x(last) + 12) + '" y="' + (+y(vals[last]) + 5) + '" fill="' + color + '" font-size="14" font-weight="700">' + esc(label) + "</text>";
+    };
+    var guide = function (v, color, label) {
+      return '<line x1="20" x2="' + (W - 20) + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="' + color + '" stroke-dasharray="5 6" stroke-width="1.5"/>' +
+        '<text x="20" y="' + (+y(v) - 6) + '" fill="' + color + '" font-size="12" font-weight="700">' + label + "</text>";
+    };
+    return '<div class="race-chart"><h3>You vs. ' + esc(rc.name) + "</h3>" +
+      '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Your vote share and your main rival\u2019s, turn by turn">' +
+      guide(52, "#34D399", "52 WIN") + guide(35, "#FB7185", "35 OUT") +
+      line(theirs, rc.color, 2.5) + line(mine, p.color, 3.5) +
+      tag(mine, p.color, "You") + tag(theirs, rc.color, rc.name.split(" ")[1]) + "</svg></div>";
+  }
+
+  /* ------------------------------------------------------------ the profile tab */
+  function profileView(st) {
+    var run = st.run, p = G.PARTY[run.party];
+    var posts = run.moments.slice().reverse().map(function (m) {
+      return '<article class="p-post"><div class="post-head"><span class="muted small">Turn ' + m.turn + (m.later ? " \u00b7 two turns later" : "") + "</span>" +
+        '<span class="delta ' + tone(m.v) + '">' + sign(m.v) + " votes</span></div>" +
+        '<span class="muted small">' + esc(m.later ? m.news.replace("Two turns after: ", "") : m.news) + "</span>" +
+        "<p>" + (m.later ? esc(m.why) : "\u201C" + esc(m.said) + "\u201D") + "</p></article>";
+    }).join("");
+    var stat = function (v, label) { return "<span><b>" + v + "</b> " + label + "</span>"; };
+    return '<section class="view profile">' +
+      '<div class="p-banner" style="background:linear-gradient(120deg,' + p.dark + "," + p.color + ')"></div>' +
+      '<div class="p-head">' + me(st, 112) + '<span class="card-party" style="--pc:' + p.color + '">' + p.name + "</span></div>" +
+      '<div class="p-id"><h2>' + esc(myName(st)) + '</h2><span class="muted">' + handle(st) + "</span>" +
+      '<p class="soft">Running for president \u00b7 2020 \u00b7 started at ' + pct(run.history[0]) + "</p></div>" +
+      '<div class="p-stats">' + stat(pct(run.votes), "vote share") + stat(run.replies, "replies") + stat(run.cheers, "base cheers") + "<span>turn <b>" + run.turn + "</b></span>" + "</div>" +
+      '<h3 class="p-sub">Your replies</h3>' +
+      (posts || '<p class="muted p-empty">No replies yet. Answer the news to start your campaign.</p>') +
+      "</section>";
   }
 
   /* ------------------------------------------------------------ 3. a turn */
   function turn(st) {
     var run = st.run, e = G.eventById(run.current), p = G.PARTY[run.party];
-    var feed = tabs(p.color) + newsPost(e, false) +
+    var feed = newsPost(e, false) +
       '<div class="composer">' + me(st, 44) + '<div class="composer-body"><span class="muted big">Reply as ' + esc(myName(st)) + "…</span>" +
       '<button class="answer" data-act="choose:0"><span class="key">1</span>' + esc(e.A) + "</button>" +
       '<button class="answer" data-act="choose:1"><span class="key">2</span>' + esc(e.B) + "</button>" +
@@ -180,7 +280,7 @@
     var why = last.why.map(function (w) {
       return '<p><b class="' + (w.good === true ? "up" : w.good === false ? "down" : "") + '">' + w.who + "</b> " + esc(w.text) + "</p>";
     }).join("");
-    var feed = tabs(p.color) + newsPost(e, true) +
+    var feed = newsPost(e, true) +
       '<div class="result" aria-live="polite">' +
       '<article class="post mine">' + '<div class="post-side">' + me(st, 44) + "</div>" +
       '<div class="post-body"><div class="post-head"><b>' + esc(myName(st)) + '</b> <span class="muted">' + handle(st) + ' · now</span><span class="delta ' + tone(last.now) + '">' + sign(last.now) + " votes</span></div>" +

@@ -1,4 +1,4 @@
-/* The intro screen: the dots light up as the vote share climbs to 52 (the arc shows 30%..56%), then the loop starts again.
+/* The intro screen: a random race plays on a loop (main.js drives it). The dots light up with the vote share (the arc shows 30%..56%), then the loop starts again.
    One loop is 16s: 45.0 -> 46.2 -> 44.8 -> 48.5 -> 50.1 -> 52.0 (turns green) -> fade. */
 @property --arc { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
 
@@ -10,9 +10,9 @@
 .seats-wrap { position: relative; width: min(680px, 100%); aspect-ratio: 680 / 350; container-type: inline-size; animation: intro-rise .9s cubic-bezier(.2,.7,.2,1) both; }
 .seats-wrap svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .seats-off g { fill: #1E2025; }
-.seats-on { position: absolute; inset: 0; animation: win-color 16s infinite; }
+.seats-on { position: absolute; inset: 0; }
 .seats-lit { fill: currentColor;
-  animation: seats-arc 16s infinite cubic-bezier(.6,0,.2,1);
+  transition: --arc 1s var(--ease);
   -webkit-mask-image: conic-gradient(from 270deg at 50% 100%, #000 var(--arc), transparent 0);
           mask-image: conic-gradient(from 270deg at 50% 100%, #000 var(--arc), transparent 0); }
 .seat-line line { stroke-width: 2; stroke-dasharray: 4 5; }
@@ -23,13 +23,21 @@
 /* the rolling number inside the arc (sized to the arc, so it fits on phones too) */
 .count { position: absolute; left: 0; right: 0; bottom: 1cqw; display: flex; justify-content: center; align-items: flex-end;
   font-size: 13.5cqw; font-weight: 900; line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums;
-  animation: win-color 16s infinite, count-fade 16s infinite; }
+}
 .col { display: inline-block; height: 1em; overflow: hidden;
   -webkit-mask-image: linear-gradient(transparent, #000 8%, #000 92%, transparent);
           mask-image: linear-gradient(transparent, #000 8%, #000 92%, transparent); }
-.col > span { display: block; will-change: transform; animation-duration: 16s; animation-iteration-count: infinite; animation-timing-function: cubic-bezier(.6,0,.2,1); }
+.col > span { display: block; will-change: transform; transition: transform 1s var(--ease); }
 .col i { display: block; height: 1em; font-style: normal; }
-.c0 { animation-name: roll-0; } .c1 { animation-name: roll-1; } .c2 { animation-name: roll-2; }
+
+/* the result: green when elected, red when out; then it fades and a new race starts */
+.seats-on, .count, .live { transition: color .5s ease, opacity .6s ease; }
+.is-win .seats-on, .is-win .count, .is-win .live { color: var(--up); }
+.is-out .seats-on, .is-out .count, .is-out .live { color: var(--down); }
+.is-win .live i { background: var(--up); animation: none; }
+.is-out .live i { background: var(--down); animation: none; }
+.fading .seats-on, .fading .count { opacity: 0; }
+.snap, .snap * { transition: none !important; }
 .count .pt { width: .13em; height: .13em; margin: 0 .04em .15em; border-radius: 50%; background: currentColor; opacity: .55; }
 .count .pc { align-self: flex-start; margin: .1em 0 0 .08em; font-size: .36em; letter-spacing: 0; color: var(--muted); }
 
@@ -49,64 +57,6 @@
 
 @keyframes intro-rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
-@keyframes win-color { 0%, 70% { color: var(--text); } 74%, 100% { color: var(--up); } }
-@keyframes count-fade { 0% { opacity: 0; } 3%, 92% { opacity: 1; } 98%, 100% { opacity: 0; } }
-@keyframes roll-0 {
-  0% { transform: translate3d(0, -4em, 0); }
-  14% { transform: translate3d(0, -4em, 0); }
-  17% { transform: translate3d(0, -4em, 0); }
-  28% { transform: translate3d(0, -4em, 0); }
-  31% { transform: translate3d(0, -4em, 0); }
-  42% { transform: translate3d(0, -4em, 0); }
-  45% { transform: translate3d(0, -4em, 0); }
-  56% { transform: translate3d(0, -4em, 0); }
-  59% { transform: translate3d(0, -5em, 0); }
-  70% { transform: translate3d(0, -5em, 0); }
-  73% { transform: translate3d(0, -5em, 0); }
-  100% { transform: translate3d(0, -5em, 0); }
-}
-@keyframes roll-1 {
-  0% { transform: translate3d(0, -5em, 0); }
-  14% { transform: translate3d(0, -5em, 0); }
-  17% { transform: translate3d(0, -6em, 0); }
-  28% { transform: translate3d(0, -6em, 0); }
-  31% { transform: translate3d(0, -4em, 0); }
-  42% { transform: translate3d(0, -4em, 0); }
-  45% { transform: translate3d(0, -8em, 0); }
-  56% { transform: translate3d(0, -8em, 0); }
-  59% { transform: translate3d(0, -0em, 0); }
-  70% { transform: translate3d(0, -0em, 0); }
-  73% { transform: translate3d(0, -2em, 0); }
-  100% { transform: translate3d(0, -2em, 0); }
-}
-@keyframes roll-2 {
-  0% { transform: translate3d(0, -0em, 0); }
-  14% { transform: translate3d(0, -0em, 0); }
-  17% { transform: translate3d(0, -2em, 0); }
-  28% { transform: translate3d(0, -2em, 0); }
-  31% { transform: translate3d(0, -8em, 0); }
-  42% { transform: translate3d(0, -8em, 0); }
-  45% { transform: translate3d(0, -5em, 0); }
-  56% { transform: translate3d(0, -5em, 0); }
-  59% { transform: translate3d(0, -1em, 0); }
-  70% { transform: translate3d(0, -1em, 0); }
-  73% { transform: translate3d(0, -0em, 0); }
-  100% { transform: translate3d(0, -0em, 0); }
-}
-@keyframes seats-arc {
-  0% { --arc: 103.8deg; }
-  14% { --arc: 103.8deg; }
-  17% { --arc: 112.3deg; }
-  28% { --arc: 112.3deg; }
-  31% { --arc: 102.3deg; }
-  42% { --arc: 102.3deg; }
-  45% { --arc: 128.1deg; }
-  56% { --arc: 128.1deg; }
-  59% { --arc: 139.2deg; }
-  70% { --arc: 139.2deg; }
-  73% { --arc: 152.3deg; }
-  100% { --arc: 152.3deg; }
-}
 
 @media (max-width: 640px) {
   .intro-hero { justify-content: flex-start; padding-top: 48px; }
@@ -122,6 +72,4 @@
 /* no motion: show a still 45.0% */
 @media (prefers-reduced-motion: reduce) {
   .intro * { animation: none !important; }
-  .seats-lit { --arc: 103.8deg; }
-  .c0 { transform: translate3d(0, -4em, 0); } .c1 { transform: translate3d(0, -5em, 0); } .c2 { transform: translateY(0); }
 }

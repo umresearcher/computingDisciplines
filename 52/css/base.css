@@ -132,4 +132,5 @@ button:focus-visible, input:focus-visible { outline: 3px solid #4F8BFF; outline-
 @media (prefers-reduced-motion: reduce) {
   .enter *, .modal, .modal-backdrop { animation: none !important; }
   .bar-fill, .btn { transition: none !important; }
+  .cand-bar i, .view { animation: none !important; }
 }
