@@ -14,6 +14,9 @@ No build step and no install. Either:
 - open `index.html` in a browser, or
 - serve the folder: `python3 -m http.server` and go to http://localhost:8000
 
+
+or https://umresearcher.github.io/computingDisciplines/52/
+
 ## Files
 
 ```
