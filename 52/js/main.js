@@ -9,6 +9,7 @@
     name: "",
     look: { skin: "#E8B48F", hair: "side", hairColor: "#1A1423", glasses: false },
     draftParty: null,         // party picked on the create screen
+    level: "medium",          // difficulty picked on the create screen: easy, medium or hard
     run: null,                // the current campaign (see game.js)
     askHome: false,           // the "go to the main screen?" dialog is open
     tab: "news"               // in the feed: news, race (everyone in the race) or profile
@@ -43,7 +44,7 @@
     app.querySelectorAll(".bar-fill").forEach(function (bar) {
       var end = bar.style.width;
       bar.style.transition = "none";
-      bar.style.width = UI.barPos(from) + "%";
+      bar.style.width = UI.barPos(from, state.run.party) + "%";
       void bar.offsetWidth;            // apply the old width before switching the transition back on
       bar.style.transition = "";
       bar.style.width = end;
@@ -146,10 +147,11 @@
       case "glasses": state.look.glasses = !state.look.glasses; render(); break;
       case "shuffle": state.look = CG.art.randomLook(); render(); break;
       case "party": state.draftParty = parts[1]; render(); break;
+      case "level": state.level = parts[1]; render(); break;
       case "launch":
         if (!state.name.trim()) { var input = document.getElementById("name"); if (input) input.focus(); return; }
         if (!state.draftParty) return;
-        state.run = G.newRun(state.draftParty);
+        state.run = G.newRun(state.draftParty, state.level);
         go("turn");
         break;
       case "choose":

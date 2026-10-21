@@ -51,7 +51,6 @@ button:focus-visible, input:focus-visible { outline: 3px solid #4F8BFF; outline-
 .chip[aria-pressed="true"] { background: var(--text); color: #000; }
 .chip.small { min-height: 36px; font-size: 14px; }
 .pill { display: inline-block; padding: 3px 10px; border: 1px solid var(--line); border-radius: 999px; font-size: 14px; color: var(--muted); }
-.pill.bad { border-color: #5C2630; color: var(--down); }
 
 /* the round avatar */
 .av { display: inline-flex; flex-shrink: 0; border-radius: 50%; overflow: hidden; }
@@ -94,6 +93,14 @@ button:focus-visible, input:focus-visible { outline: 3px solid #4F8BFF; outline-
 }
 .party-ind small { color: var(--muted); font-weight: 400; font-size: 15px; }
 .party-ind[aria-pressed="true"] { box-shadow: inset 0 0 0 2px #A88BFF; }
+.levels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.level {
+  display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; text-align: left;
+  border: 0; border-radius: 16px; background: var(--panel); box-shadow: inset 0 0 0 2px var(--line);
+}
+.level b { font-size: 18px; }
+.level small { font-size: 13px; line-height: 1.35; color: var(--muted); }
+.level[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--text); }
 
 .create-preview { flex: 0 1 380px; min-width: 280px; display: flex; flex-direction: column; gap: 14px; }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 28px; overflow: hidden; }
@@ -109,6 +116,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid #4F8BFF; outline-
   .row-label { width: auto; }
   .create-preview { flex-basis: 100%; }
   .party-ind { border-radius: 16px; padding: 10px 16px; text-align: left; }
+  .levels { grid-template-columns: 1fr; }
   .card-body { flex-direction: row; text-align: left; flex-wrap: wrap; justify-content: center; }
   .card-body .av { width: 120px !important; height: 120px !important; }
 }

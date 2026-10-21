@@ -23,6 +23,7 @@
 .end-name { margin-top: 18px; font-size: clamp(44px, 7vw, 72px); font-weight: 800; line-height: 1; letter-spacing: -0.03em; overflow-wrap: anywhere; }
 .end-line { margin-top: 10px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; font-size: 20px; }
 .end-line .sep { color: #3A3A42; }
+.end-count { margin-top: 8px; font-size: 16px; }
 /* play again right away, or glide down to the story */
 .end-actions { margin-top: 26px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
 .end-actions .btn { min-height: 54px; padding: 0 30px; font-size: 17px; display: inline-flex; align-items: center; gap: 8px; }
@@ -54,11 +55,6 @@
 .number { border-top: 3px solid; padding-top: 16px; display: flex; flex-direction: column; gap: 6px; }
 .number span { font-size: 76px; font-weight: 800; line-height: 1; letter-spacing: -0.03em; }
 .number small { font-size: 17px; color: var(--soft); }
-.lesson { display: flex; align-items: baseline; gap: 22px; padding: 22px 0; border-top: 1px solid #1F2026; }
-.lesson-n { font-size: 18px; font-weight: 800; }
-.lesson-t { flex: 1; font-size: clamp(20px, 2.4vw, 28px); font-weight: 600; line-height: 1.3; }
-.lesson-src { display: block; margin-top: 6px; font-size: 14px; font-weight: 400; color: var(--muted); }
-.lesson .pill { color: var(--soft); white-space: nowrap; }
 .again { padding: 80px 20px 110px; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
 .again h2 { font-size: 40px; font-weight: 800; }
 .again .btn { margin-top: 8px; min-height: 56px; padding: 0 34px; font-size: 18px; }
@@ -93,6 +89,5 @@
   .moments { grid-template-columns: 1fr; }
   .numbers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .number span { font-size: 56px; }
-  .lesson { flex-wrap: wrap; gap: 10px 16px; }
   .beam { width: 520px; margin-left: -260px; }
 }

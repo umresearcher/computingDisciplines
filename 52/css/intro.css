@@ -1,5 +1,5 @@
-/* The intro screen: a random race plays on a loop (main.js drives it). The dots light up with the vote share (the arc shows 30%..56%), then the loop starts again.
-   One loop is 16s: 45.0 -> 46.2 -> 44.8 -> 48.5 -> 50.1 -> 52.0 (turns green) -> fade. */
+/* The intro screen: a random race plays on a loop (main.js drives it). The dots light up with the vote share (the arc shows 30%..56%).
+   Each race starts at 45.0, moves 5 to 9 times, ends at 52+ (green, "Elected") or 35 or less (red, "Out of the race"), fades, and a new one starts. */
 @property --arc { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
 
 .intro { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; padding: 0 clamp(16px, 5vw, 40px); }

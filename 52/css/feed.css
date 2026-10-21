@@ -39,13 +39,10 @@
   width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
   background: var(--text); color: #000; font-weight: 800; font-size: 13px;
 }
-.outlet.low { background: var(--down); }
-.outlet.wire { background: #536471; color: var(--text); }
 .outlet.alarm { background: var(--warn); }
 .outlet.calm { background: var(--up); }
 .thread-line { flex: 1; width: 2px; margin-top: 4px; background: #333639; }
 .headline { font-size: clamp(21px, 2.4vw, 24px); font-weight: 700; line-height: 1.25; }
-.chips { display: flex; gap: 8px; flex-wrap: wrap; }
 .actions { display: flex; justify-content: space-between; max-width: 420px; padding-top: 4px; color: var(--muted); font-size: 14px; }
 .actions span { display: inline-flex; align-items: center; gap: 6px; }
 
@@ -75,12 +72,9 @@
 .why { margin: 4px 16px 16px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 16px; display: flex; flex-direction: column; gap: 8px; }
 .why h2 { font-size: 16px; }
 .why p { font-size: 16px; line-height: 1.45; }
-.learn { margin-top: 4px; padding-top: 10px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; font-size: 14px; color: #8B9096; }
-.learn p { font-size: 14px; }
-.learn .ps { color: var(--warn); }
-.learn .cs { color: var(--up); }
-.src { color: #8FB5FF; text-decoration: underline; text-underline-offset: 2px; white-space: normal; }
-.src:hover { color: #C4D7FF; }
+.why .up-line, .why .down-line, .why .flat-line { padding-left: 12px; border-left: 3px solid var(--line); font-size: 17px; }
+.why .up-line { border-color: var(--up); }
+.why .down-line { border-color: var(--down); }
 .why-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 6px; }
 
 /* switching tabs: the view fades in; bars grow one row after another */
@@ -103,7 +97,7 @@
 .lead-tag { border: 1px solid var(--line); color: var(--soft); }
 .cand-bar { position: relative; height: 6px; border-radius: 3px; background: #1C1E22; }
 .cand-bar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; background: var(--c); transform-origin: left; }
-.cand-bar em { position: absolute; left: 86.7%; top: -4px; bottom: -4px; width: 2px; background: var(--up); opacity: .7; }
+.cand-bar em { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--up); opacity: .7; }
 .cand-num { width: 86px; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
 .cand-num b { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
 .cand-num span { font-size: 13px; font-weight: 700; color: var(--muted); }
@@ -138,7 +132,6 @@
 .quote { border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
 .quote .post-head { font-size: 14px; gap: 8px; }
 .quote p { font-size: 17px; }
-.context { padding: 12px 14px; border-radius: 12px; background: #2A2410; color: var(--warn); font-size: 15px; line-height: 1.45; }
 
 /* right rail */
 .rail { flex: 0 0 320px; position: sticky; top: 0; align-self: flex-start; display: flex; flex-direction: column; gap: 16px; padding: 14px 0; }
@@ -147,6 +140,14 @@
 .race { display: flex; flex-direction: column; gap: 10px; }
 .race-top { display: flex; align-items: baseline; gap: 8px; }
 .race-num { font-size: 44px; font-weight: 800; line-height: 1; }
+/* countdown to Election Day: under the tabs, above the news */
+.countdown { display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+.cd-top { display: flex; align-items: baseline; gap: 8px; }
+.cd-top b { font-size: 28px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+.cd-top span { color: var(--soft); font-size: 15px; }
+.cd-track { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.cd-track i { display: block; height: 100%; background: var(--warn); transition: width .9s var(--ease); }
+.mini-days { font-variant-numeric: tabular-nums; }
 .bar { position: relative; height: 32px; }
 .bar-track { position: relative; height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
 .bar-fill { height: 100%; transition: width .9s var(--ease); }
